@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_check/core/button/custom_button.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -45,6 +46,15 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ],
                         ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(onPressed: () {}, child: const Text('오늘')),
+                            TextButton(onPressed: () {}, child: const Text('주')),
+                            TextButton(onPressed: () {}, child: const Text('월')),
+                            TextButton(onPressed: () {}, child: const Text('년')),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -62,6 +72,27 @@ class HomeScreen extends StatelessWidget {
                         color: Colors.grey.withOpacity(0.3),
                         spreadRadius: 1,
                         blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.red,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Container(
+                        width: double.infinity,
+                        height: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.blue,
+                        ),
                       ),
                     ],
                   ),
