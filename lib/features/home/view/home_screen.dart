@@ -10,22 +10,64 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: SizedBox(
           width: double.infinity,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Dashboard', style: Theme.of(context).textTheme.displaySmall),
-                  Row(
-                    children: [
-                      IconButton(onPressed: () {}, icon: const Icon(Icons.upload_file_outlined)),
-                      IconButton(onPressed: () {}, icon: const Icon(Icons.download)),
-                      IconButton(onPressed: () {}, icon: const Icon(Icons.share)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('대시보드', style: Theme.of(context).textTheme.displaySmall),
+                    Row(
+                      children: [
+                        IconButton(onPressed: () {}, icon: const Icon(Icons.upload_file_outlined)),
+                        IconButton(onPressed: () {}, icon: const Icon(Icons.download)),
+                        IconButton(onPressed: () {}, icon: const Icon(Icons.share)),
+                      ],
+                    )
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 50,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              spreadRadius: 1,
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  constraints: const BoxConstraints(
+                    minHeight: 300,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 1,
+                        blurRadius: 10,
+                      ),
                     ],
-                  )
-                ],
-              )
-            ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
