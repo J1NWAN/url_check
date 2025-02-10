@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/features/home/view/dashboard_screen.dart';
+import 'package:url_check/features/home/view/url_analysis_screen.dart';
 import 'package:url_check/features/home/viewmodel/home_view_model.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -21,10 +22,9 @@ class HomeScreen extends ConsumerWidget {
             onPageChanged: (page) {
               ref.read(homeViewModelProvider.notifier).onPageChanged(page);
             },
-            children: [
-              DashboardScreen(index: viewModel.currentPage),
-              DashboardScreen(index: viewModel.currentPage),
-              DashboardScreen(index: viewModel.currentPage),
+            children: const [
+              DashboardScreen(),
+              UrlAnalysisScreen(),
             ],
           ),
         ),
