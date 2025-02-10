@@ -12,7 +12,12 @@ class HomeScreen extends ConsumerWidget {
     final viewModel = ref.watch(homeViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
+      appBar: AppBar(
+        title: const Text('URL Checker'),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent, // 스크롤 시 색상 오버레이 제거
+        scrolledUnderElevation: 0, // 스크롤 시 그림자 제거
+      ),
       body: SizedBox.expand(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
