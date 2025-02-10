@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+  final int index;
+  const DashboardScreen({super.key, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +11,7 @@ class DashboardScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('대시보드', style: Theme.of(context).textTheme.displaySmall),
+            Text('대시보드 ${index + 1}', style: Theme.of(context).textTheme.displaySmall),
             Row(
               children: [
                 IconButton(onPressed: () {}, icon: const Icon(Icons.upload_file_outlined)),

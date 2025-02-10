@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/features/home/view/dashboard_screen.dart';
+import 'package:url_check/features/home/viewmodel/home_view_model.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModel = ref.watch(homeViewModelProvider);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
       body: SizedBox.expand(
@@ -13,10 +17,14 @@ class HomeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: PageView(
             scrollDirection: Axis.vertical,
-            children: const [
-              DashboardScreen(),
-              DashboardScreen(),
-              DashboardScreen(),
+            controller: viewModel.pageController,
+            onPageChanged: (page) {
+              ref.read(homeViewModelProvider.notifier).onPageChanged(page);
+            },
+            children: [
+              DashboardScreen(index: viewModel.currentPage),
+              DashboardScreen(index: viewModel.currentPage),
+              DashboardScreen(index: viewModel.currentPage),
             ],
           ),
         ),
