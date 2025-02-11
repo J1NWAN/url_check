@@ -24,13 +24,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
           decoration: InputDecoration(
             hintText: 'https://example.com',
             prefixIcon: const Icon(Icons.link),
-            suffixIcon: state.isLoading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : IconButton(
+            suffixIcon: IconButton(
                     icon: const Icon(Icons.search),
                     onPressed: () {
                       ref.read(urlAnalysisViewModelProvider.notifier).analyzeUrl();
@@ -64,8 +58,9 @@ class UrlAnalysisScreen extends ConsumerWidget {
               ],
             ),
           ),
-
-        if (state.analysisResult != null) ...[
+        if (state.isLoading) ...[
+          const Center(child: CircularProgressIndicator()),
+        ] else if (state.analysisResult != null) ...[
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -150,6 +145,9 @@ class UrlAnalysisScreen extends ConsumerWidget {
               ),
             ),
           ),
+        ] else ...[
+          const SizedBox(height: 100),
+          const Center(child: Text('조회된 결과가 없습니다.')),
         ],
       ],
     );
