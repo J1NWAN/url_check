@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_check/core/button/custom_button.dart';
 import 'package:url_check/features/home/viewmodel/url_analysis_view_model.dart';
 
 class UrlAnalysisScreen extends ConsumerWidget {
@@ -13,7 +14,19 @@ class UrlAnalysisScreen extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 제목
-        Text('URL 분석', style: Theme.of(context).textTheme.displaySmall),
+        Row(
+          children: [
+            Text('URL 분석', style: Theme.of(context).textTheme.displaySmall),
+            const Spacer(),
+            CustomButton.primary(
+              text: '불러오기',
+              onPressed: () {
+                ref.read(urlAnalysisViewModelProvider.notifier).getUrlAnalysis(context);
+              },
+            ),
+          ],
+        ),
+
         const SizedBox(height: 24),
 
         // URL 입력 필드
@@ -25,11 +38,11 @@ class UrlAnalysisScreen extends ConsumerWidget {
             hintText: 'https://example.com',
             prefixIcon: const Icon(Icons.link),
             suffixIcon: IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      ref.read(urlAnalysisViewModelProvider.notifier).analyzeUrl();
-                    },
-                  ),
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                ref.read(urlAnalysisViewModelProvider.notifier).analyzeUrl(context);
+              },
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -37,27 +50,6 @@ class UrlAnalysisScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 32),
 
-        if (state.error != null)
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.red.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.red.shade200),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.error_outline, color: Colors.red.shade700),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    state.error!,
-                    style: TextStyle(color: Colors.red.shade700),
-                  ),
-                ),
-              ],
-            ),
-          ),
         if (state.isLoading) ...[
           const Center(child: CircularProgressIndicator()),
         ] else if (state.analysisResult != null) ...[

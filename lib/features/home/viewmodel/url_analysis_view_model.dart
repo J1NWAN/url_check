@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:url_check/core/dialog/custom_dialog.dart';
+import 'package:url_check/core/dialog/model/dropdown_config.dart';
 import 'package:url_check/core/snackbar/custom_snackbar.dart';
 import 'package:url_check/core/snackbar/enum/snackbar_type.dart';
 
@@ -43,9 +45,14 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
     state = state.copyWith(url: url);
   }
 
-  Future<void> analyzeUrl() async {
+  Future<void> analyzeUrl(BuildContext context) async {
     if (state.url.isEmpty) {
-      state = state.copyWith(error: 'URL을 입력해주세요');
+      CustomSnackBar.show(
+        context,
+        title: '알림',
+        message: 'URL을 입력해주세요',
+        type: SnackBarType.info,
+      );
       return;
     }
 
@@ -57,7 +64,12 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
         throw const FormatException('올바른 URL 형식이 아닙니다');
       }
     } catch (e) {
-      state = state.copyWith(error: '올바른 URL 형식이 아닙니다');
+      CustomSnackBar.show(
+        context,
+        title: '알림',
+        message: '올바른 URL 형식이 아닙니다',
+        type: SnackBarType.error,
+      );
       return;
     }
 
@@ -120,5 +132,26 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
         error: '분석 중 오류가 발생했습니다: $e',
       );
     }
+  }
+
+  Future<void> getUrlAnalysis(BuildContext context) async {
+    final result = await CustomDialog.dropDown<String>(
+      context,
+      title: 'URL 선택',
+      items: [
+        DropdownItem(
+          value: 'url1',
+          label: 'Example.com',
+          icon: const Icon(Icons.link),
+        ),
+        DropdownItem(
+          value: 'url2',
+          label: 'Google.com',
+          icon: const Icon(Icons.link),
+        ),
+      ],
+      confirmText: '확인',
+      cancelText: '취소',
+    );
   }
 }
