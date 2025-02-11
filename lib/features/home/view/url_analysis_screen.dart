@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_check/features/home/viewmodel/url_analysis_view_model.dart';
 
 class UrlAnalysisScreen extends ConsumerWidget {
   const UrlAnalysisScreen({super.key});
@@ -22,6 +23,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
               icon: const Icon(Icons.search),
               onPressed: () {
                 // URL 분석 시작
+                ref.read(urlAnalysisViewModelProvider.notifier).analyzeUrl(context);
               },
             ),
             border: OutlineInputBorder(
