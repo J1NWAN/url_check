@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:url_check/core/snackbar/custom_snackbar.dart';
 import 'package:url_check/core/snackbar/enum/snackbar_type.dart';
@@ -42,35 +43,70 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
     state = state.copyWith(url: url);
   }
 
-  Future<void> analyzeUrl(BuildContext context) async {
+  Future<void> analyzeUrl() async {
     if (state.url.isEmpty) {
       state = state.copyWith(error: 'URL을 입력해주세요');
-      CustomSnackBar.show(
-        context,
-        title: '알림',
-        message: 'URL을 입력해주세요',
-        type: SnackBarType.info,
-      );
+      return;
+    }
+
+    // URL 형식 검증
+    Uri? uri;
+    try {
+      uri = Uri.parse(state.url);
+      if (!uri.isAbsolute) {
+        throw const FormatException('올바른 URL 형식이 아닙니다');
+      }
+    } catch (e) {
+      state = state.copyWith(error: '올바른 URL 형식이 아닙니다');
       return;
     }
 
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      await Future.delayed(const Duration(seconds: 2));
+      // 응답 시간 측정 시작
+      final stopwatch = Stopwatch()..start();
+
+      // HTTP 요청 보내기
+      final response = await http.get(uri).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw Exception('요청 시간이 초과되었습니다');
+        },
+      );
+
+      // 응답 시간 측정 종료
+      stopwatch.stop();
+      final responseTime = stopwatch.elapsedMilliseconds;
+
+      // 응답 헤더 분석
+      final serverInfo = response.headers['server'] ?? 'Unknown';
+      final contentType = response.headers['content-type'] ?? 'Unknown';
+      final securityHeaders = {
+        'Strict-Transport-Security': response.headers['strict-transport-security'],
+        'X-Content-Type-Options': response.headers['x-content-type-options'],
+        'X-Frame-Options': response.headers['x-frame-options'],
+        'Content-Security-Policy': response.headers['content-security-policy'],
+      };
+
+      // SSL 정보 (HTTPS인 경우)
+      final isHttps = uri.scheme == 'https';
 
       final result = {
-        'status': 'success',
-        'responseTime': '234ms',
-        'ssl': {
-          'issuer': 'DigiCert Inc',
-          'expiryDate': '2024-12-31',
-          'encryption': 'SHA-256',
+        'status': {
+          'code': response.statusCode,
+          'isSuccess': response.statusCode >= 200 && response.statusCode < 300,
+        },
+        'performance': {
+          'responseTime': '$responseTime ms',
         },
         'server': {
-          'type': 'nginx/1.18.0',
-          'ip': '192.168.1.1',
-          'location': 'Seoul, Korea',
+          'software': serverInfo,
+          'contentType': contentType,
+        },
+        'security': {
+          'isHttps': isHttps,
+          'headers': securityHeaders,
         },
       };
 
@@ -78,24 +114,10 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
         isLoading: false,
         analysisResult: result,
       );
-
-      CustomSnackBar.show(
-        context,
-        title: '성공',
-        message: 'URL 분석이 완료되었습니다',
-        type: SnackBarType.success,
-      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         error: '분석 중 오류가 발생했습니다: $e',
-      );
-
-      CustomSnackBar.show(
-        context,
-        title: '오류',
-        message: '분석 중 오류가 발생했습니다',
-        type: SnackBarType.error,
       );
     }
   }

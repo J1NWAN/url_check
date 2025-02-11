@@ -7,6 +7,8 @@ class UrlAnalysisScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(urlAnalysisViewModelProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -16,16 +18,24 @@ class UrlAnalysisScreen extends ConsumerWidget {
 
         // URL 입력 필드
         TextField(
+          onChanged: (value) {
+            ref.read(urlAnalysisViewModelProvider.notifier).updateUrl(value);
+          },
           decoration: InputDecoration(
             hintText: 'https://example.com',
             prefixIcon: const Icon(Icons.link),
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                // URL 분석 시작
-                ref.read(urlAnalysisViewModelProvider.notifier).analyzeUrl(context);
-              },
-            ),
+            suffixIcon: state.isLoading
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      ref.read(urlAnalysisViewModelProvider.notifier).analyzeUrl();
+                    },
+                  ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -33,112 +43,123 @@ class UrlAnalysisScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 32),
 
-        // 분석 결과 카드들
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
+        if (state.error != null)
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.red.shade50,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.red.shade200),
+            ),
+            child: Row(
               children: [
-                // 상태 카드
-                _buildAnalysisCard(
-                  context,
-                  title: '접속 상태',
-                  icon: Icons.check_circle,
-                  iconColor: Colors.green,
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Row(
-                          children: [
-                            Icon(Icons.check, color: Colors.green, size: 16),
-                            SizedBox(width: 4),
-                            Text(
-                              '정상 작동',
-                              style: TextStyle(color: Colors.green),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      const Text('응답 시간: 234ms'),
-                    ],
-                  ),
-                ),
-
-                // SSL 인증서 정보 카드
-                _buildAnalysisCard(
-                  context,
-                  title: 'SSL 인증서',
-                  icon: Icons.security,
-                  iconColor: Colors.blue,
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('발급자: DigiCert Inc'),
-                      SizedBox(height: 4),
-                      Text('만료일: 2024-12-31'),
-                      SizedBox(height: 4),
-                      Text('암호화: SHA-256'),
-                    ],
-                  ),
-                ),
-
-                // 메타데이터 카드
-                _buildAnalysisCard(
-                  context,
-                  title: '메타데이터',
-                  icon: Icons.info_outline,
-                  iconColor: Colors.orange,
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('제목: Example Website'),
-                      SizedBox(height: 4),
-                      Text('설명: This is an example website'),
-                      SizedBox(height: 4),
-                      Text('언어: ko-KR'),
-                    ],
-                  ),
-                ),
-
-                // 서버 정보 카드
-                _buildAnalysisCard(
-                  context,
-                  title: '서버 정보',
-                  icon: Icons.dns,
-                  iconColor: Colors.purple,
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('서버: nginx/1.18.0'),
-                      SizedBox(height: 4),
-                      Text('IP: 192.168.1.1'),
-                      SizedBox(height: 4),
-                      Text('위치: Seoul, Korea'),
-                    ],
+                Icon(Icons.error_outline, color: Colors.red.shade700),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    state.error!,
+                    style: TextStyle(color: Colors.red.shade700),
                   ),
                 ),
               ],
             ),
           ),
-        ),
+
+        if (state.analysisResult != null) ...[
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildResultCard(
+                    context,
+                    title: '상태',
+                    icon: Icons.info_outline,
+                    content: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildResultRow(
+                          '상태 코드',
+                          state.analysisResult!['status']['code'].toString(),
+                        ),
+                        _buildResultRow(
+                          '성공 여부',
+                          state.analysisResult!['status']['isSuccess'] ? '성공' : '실패',
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildResultCard(
+                    context,
+                    title: '성능',
+                    icon: Icons.speed,
+                    content: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildResultRow(
+                          '응답 시간',
+                          state.analysisResult!['performance']['responseTime'],
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildResultCard(
+                    context,
+                    title: '서버 정보',
+                    icon: Icons.dns,
+                    content: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildResultRow(
+                          '서버 소프트웨어',
+                          state.analysisResult!['server']['software'],
+                        ),
+                        _buildResultRow(
+                          'Content-Type',
+                          state.analysisResult!['server']['contentType'],
+                        ),
+                      ],
+                    ),
+                  ),
+                  _buildResultCard(
+                    context,
+                    title: '보안',
+                    icon: Icons.security,
+                    content: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildResultRow(
+                          'HTTPS',
+                          state.analysisResult!['security']['isHttps'] ? '사용' : '미사용',
+                        ),
+                        const SizedBox(height: 8),
+                        const Text(
+                          '보안 헤더',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        ...((state.analysisResult!['security']['headers'] as Map<String, dynamic>)
+                            .entries
+                            .map((e) => _buildResultRow(e.key, e.value ?? '미설정'))),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }
 
-  Widget _buildAnalysisCard(
+  Widget _buildResultCard(
     BuildContext context, {
     required String title,
     required IconData icon,
-    required Color iconColor,
-    required Widget child,
+    required Widget content,
   }) {
     return Container(
       width: double.infinity,
@@ -161,7 +182,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Icon(icon, color: iconColor),
+              Icon(icon, size: 20),
               const SizedBox(width: 8),
               Text(
                 title,
@@ -170,7 +191,31 @@ class UrlAnalysisScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
-          child,
+          content,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(value),
+          ),
         ],
       ),
     );
