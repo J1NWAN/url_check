@@ -20,6 +20,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
             const Spacer(),
             CustomButton.primary(
               text: '불러오기',
+              height: 40,
               onPressed: () {
                 ref.read(urlAnalysisViewModelProvider.notifier).getUrlAnalysis(context);
               },
