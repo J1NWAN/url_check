@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:url_check/core/button/custom_dropdown_button.dart';
+import 'package:url_check/core/button/model/dropdown_config.dart';
+import 'package:url_check/core/dialog/custom_dialog.dart';
 import 'package:url_check/core/snackbar/custom_snackbar.dart';
 import 'package:url_check/core/snackbar/enum/snackbar_type.dart';
 
@@ -132,5 +135,25 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
     }
   }
 
-  Future<void> getUrlAnalysis(BuildContext context) async {}
+  Future<void> getUrlAnalysis(BuildContext context) async {
+    // 카테고리 목록(임시 데이터)
+    final categories = [
+      DropdownConfig(id: '1', name: 'Example.com', color: '0xFF808080'),
+      DropdownConfig(id: '2', name: 'Google.com', color: '0xFF808080'),
+    ];
+    final result = await CustomDialog.show(
+      context,
+      title: 'URL 불러오기',
+      content: 'URL을 선택해주세요.',
+      showIcon: false,
+      dropdown: CustomDropDownButton(
+        label: 'URL 선택',
+        categories: categories,
+        value: categories[0].id,
+        onChanged: (value) {},
+      ),
+      confirmText: '적용',
+      cancelText: '취소',
+    );
+  }
 }
