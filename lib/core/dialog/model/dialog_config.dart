@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_check/core/button/custom_dropdown_button.dart';
 import 'package:url_check/core/dialog/enum/dialog_type.dart';
 
 class DialogConfig {
@@ -9,6 +10,8 @@ class DialogConfig {
   final String? cancelText;
   final VoidCallback? onConfirm;
   final VoidCallback? onCancel;
+  final CustomDropDownButton? dropdown;
+  final bool? showIcon;
 
   const DialogConfig({
     required this.title,
@@ -18,5 +21,7 @@ class DialogConfig {
     this.cancelText,
     this.onConfirm,
     this.onCancel,
+    this.dropdown,
+    this.showIcon = true,
   });
 }

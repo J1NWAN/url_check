@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_check/core/button/custom_dropdown_button.dart';
 import 'package:url_check/core/dialog/custom_dialog_overlay.dart';
 import 'package:url_check/core/dialog/enum/dialog_type.dart';
 import 'package:url_check/core/dialog/model/dialog_config.dart';
@@ -21,7 +22,9 @@ class CustomDialog {
     BuildContext context, {
     required String title,
     required String content,
+    CustomDropDownButton? dropdown,
     DialogType type = DialogType.normal,
+    bool showIcon = true,
     String? confirmText,
     String? cancelText,
     VoidCallback? onConfirm,
@@ -30,7 +33,9 @@ class CustomDialog {
     final config = DialogConfig(
       title: title,
       content: content,
+      dropdown: dropdown,
       type: type,
+      showIcon: showIcon,
       confirmText: confirmText,
       cancelText: cancelText,
       onConfirm: onConfirm,
