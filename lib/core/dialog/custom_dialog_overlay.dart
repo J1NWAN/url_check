@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_check/core/button/custom_button.dart';
 import 'package:url_check/core/dialog/model/dialog_config.dart';
 
 class CustomDialogOverlay extends StatefulWidget {
@@ -70,43 +71,56 @@ class _CustomDialogOverlayState extends State<CustomDialogOverlay> with SingleTi
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    widget.config.type.icon,
-                    size: 48,
-                    color: Colors.grey[800],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    widget.config.title,
-                    style: Theme.of(context).textTheme.titleLarge,
-                    textAlign: TextAlign.center,
+                  if (widget.config.showIcon ?? true)
+                    Icon(
+                      widget.config.type.icon,
+                      size: 48,
+                      color: Colors.grey[800],
+                    ),
+                  if (widget.config.showIcon ?? true) const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      widget.config.title,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      textAlign: TextAlign.left,
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    widget.config.content,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    textAlign: TextAlign.center,
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text(
+                      widget.config.content,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.left,
+                    ),
                   ),
+                  if (widget.config.dropdown != null) ...[
+                    const SizedBox(height: 24),
+                    widget.config.dropdown!,
+                  ],
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       if (widget.config.cancelText != null)
-                        TextButton(
+                        CustomButton.danger(
+                          text: widget.config.cancelText!,
+                          height: 40,
                           onPressed: () {
                             widget.config.onCancel?.call();
                             Navigator.of(context).pop(false);
                           },
-                          child: Text(widget.config.cancelText!),
                         ),
                       if (widget.config.confirmText != null) ...[
                         const SizedBox(width: 8),
-                        ElevatedButton(
+                        CustomButton.primary(
+                          text: widget.config.confirmText!,
+                          height: 40,
                           onPressed: () {
                             widget.config.onConfirm?.call();
                             Navigator.of(context).pop(true);
                           },
-                          child: Text(widget.config.confirmText!),
                         ),
                       ],
                     ],

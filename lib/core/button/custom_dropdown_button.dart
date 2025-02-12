@@ -33,19 +33,14 @@ class CustomDropDownButton extends StatelessWidget {
             (DropdownConfig category) => DropdownMenuItem<String>(
               value: category.id,
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: Color(int.parse(category.color)),
-                      shape: BoxShape.circle,
+                  Flexible(
+                    child: Text(
+                      category.name,
+                      style: const TextStyle(fontSize: 14),
+                      //overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    category.name,
-                    style: const TextStyle(fontSize: 14),
                   ),
                 ],
               ),
@@ -61,7 +56,7 @@ class CustomDropDownButton extends StatelessWidget {
       buttonStyleData: ButtonStyleData(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         height: 40,
-        width: 140,
+        width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: Colors.grey),
