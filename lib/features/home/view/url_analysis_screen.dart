@@ -32,6 +32,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
 
         // URL 입력 필드
         TextField(
+          controller: state.urlController,
           onChanged: (value) {
             ref.read(urlAnalysisViewModelProvider.notifier).updateUrl(value);
           },

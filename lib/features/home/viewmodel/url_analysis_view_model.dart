@@ -14,25 +14,33 @@ class UrlAnalysisState {
   final bool isLoading;
   final String? error;
   final Map<String, dynamic>? analysisResult;
+  final String selectedUrlId;
+  final TextEditingController urlController;
 
   UrlAnalysisState({
     this.url = '',
     this.isLoading = false,
     this.error,
     this.analysisResult,
-  });
+    this.selectedUrlId = '1',
+    TextEditingController? urlController,
+  }) : urlController = urlController ?? TextEditingController();
 
   UrlAnalysisState copyWith({
     String? url,
     bool? isLoading,
     String? error,
     Map<String, dynamic>? analysisResult,
+    String? selectedUrlId,
+    TextEditingController? urlController,
   }) {
     return UrlAnalysisState(
       url: url ?? this.url,
       isLoading: isLoading ?? this.isLoading,
       error: error,
       analysisResult: analysisResult ?? this.analysisResult,
+      selectedUrlId: selectedUrlId ?? this.selectedUrlId,
+      urlController: urlController ?? this.urlController,
     );
   }
 }
@@ -136,12 +144,12 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
   }
 
   Future<void> getUrlAnalysis(BuildContext context) async {
-    // 카테고리 목록(임시 데이터)
     final categories = [
-      DropdownConfig(id: '1', name: 'Example.com', color: '0xFF808080'),
-      DropdownConfig(id: '2', name: 'Google.com', color: '0xFF808080'),
+      DropdownConfig(id: '1', name: 'https://www.kins.re.kr', color: '0xFF808080'),
+      DropdownConfig(id: '2', name: 'https://google.com', color: '0xFF808080'),
     ];
-    final result = await CustomDialog.show(
+
+    await CustomDialog.show(
       context,
       title: 'URL 불러오기',
       content: 'URL을 선택해주세요.',
@@ -149,11 +157,23 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
       dropdown: CustomDropDownButton(
         label: 'URL 선택',
         categories: categories,
-        value: categories[0].id,
-        onChanged: (value) {},
+        value: state.selectedUrlId,
+        onChanged: (value) {
+          final selectedUrl = categories.firstWhere((category) => category.id == value).name;
+
+          state = state.copyWith(
+            selectedUrlId: value,
+            url: selectedUrl,
+          );
+        },
       ),
       confirmText: '적용',
       cancelText: '취소',
+      onConfirm: () {
+        final selectedUrl = categories.firstWhere((category) => category.id == state.selectedUrlId).name;
+        updateUrl(selectedUrl);
+        state.urlController.text = selectedUrl;
+      },
     );
   }
 }

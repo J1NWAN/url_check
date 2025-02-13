@@ -2,7 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:url_check/core/button/model/dropdown_config.dart';
 
-class CustomDropDownButton extends StatelessWidget {
+class CustomDropDownButton extends StatefulWidget {
   final String label;
   final List<DropdownConfig> categories;
   final String value;
@@ -17,18 +17,31 @@ class CustomDropDownButton extends StatelessWidget {
   });
 
   @override
+  State<CustomDropDownButton> createState() => _CustomDropDownButtonState();
+}
+
+class _CustomDropDownButtonState extends State<CustomDropDownButton> {
+  late String currentValue;
+
+  @override
+  void initState() {
+    super.initState();
+    currentValue = widget.value;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DropdownButton2<String>(
       isExpanded: true,
       underline: const SizedBox(), // 밑줄 제거
       hint: Text(
-        label,
+        widget.label,
         style: TextStyle(
           fontSize: 14,
           color: Theme.of(context).hintColor,
         ),
       ),
-      items: categories
+      items: widget.categories
           .map(
             (DropdownConfig category) => DropdownMenuItem<String>(
               value: category.id,
@@ -47,10 +60,13 @@ class CustomDropDownButton extends StatelessWidget {
             ),
           )
           .toList(),
-      value: value,
-      onChanged: (String? value) {
+      value: currentValue,
+      onChanged: (value) {
         if (value != null) {
-          onChanged(value);
+          setState(() {
+            currentValue = value;
+          });
+          widget.onChanged(value);
         }
       },
       buttonStyleData: ButtonStyleData(
