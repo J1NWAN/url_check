@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/view/dashboard_screen.dart';
 import 'package:url_check/features/home/view/url_analysis_screen.dart';
 import 'package:url_check/features/home/viewmodel/home_view_model.dart';
+import 'package:url_check/features/setting/view/setting_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -14,7 +16,7 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('URL Checker'),
-        backgroundColor: Colors.white,
+        backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
         surfaceTintColor: Colors.transparent, // 스크롤 시 색상 오버레이 제거
         scrolledUnderElevation: 0, // 스크롤 시 그림자 제거
       ),
@@ -38,6 +40,8 @@ class HomeScreen extends ConsumerWidget {
         onTap: (index) {
           if (index == 0) {
             viewModel.pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          } else if (index == 1) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingScreen()));
           }
         },
         items: const [

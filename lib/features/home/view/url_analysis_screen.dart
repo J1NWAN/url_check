@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/core/button/custom_button.dart';
+import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/viewmodel/url_analysis_view_model.dart';
 
 class UrlAnalysisScreen extends ConsumerWidget {
@@ -63,6 +64,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
                   _buildResultCard(
                     context,
                     title: '상태',
+                    backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
                     icon: Icons.info_outline,
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,6 +83,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
                   _buildResultCard(
                     context,
                     title: '성능',
+                    backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
                     icon: Icons.speed,
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,6 +98,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
                   _buildResultCard(
                     context,
                     title: '서버 정보',
+                    backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
                     icon: Icons.dns,
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,6 +117,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
                   _buildResultCard(
                     context,
                     title: '보안',
+                    backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
                     icon: Icons.security,
                     content: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,6 +155,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
   Widget _buildResultCard(
     BuildContext context, {
     required String title,
+    required Color backgroundColor,
     required IconData icon,
     required Widget content,
   }) {
@@ -158,16 +164,9 @@ class UrlAnalysisScreen extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 1),
-          ),
-        ],
+        border: Border.all(color: Colors.grey.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

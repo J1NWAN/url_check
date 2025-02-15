@@ -6,6 +6,7 @@ import 'package:url_check/core/button/model/dropdown_config.dart';
 import 'package:url_check/core/dialog/custom_dialog.dart';
 import 'package:url_check/core/snackbar/custom_snackbar.dart';
 import 'package:url_check/core/snackbar/enum/snackbar_type.dart';
+import 'package:url_check/core/theme/theme_view_model.dart';
 
 part 'url_analysis_view_model.g.dart';
 
@@ -154,6 +155,7 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
       title: 'URL 불러오기',
       content: 'URL을 선택해주세요.',
       showIcon: false,
+      backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
       dropdown: CustomDropDownButton(
         label: 'URL 선택',
         categories: categories,

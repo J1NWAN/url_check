@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/widget/chart_widget.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       children: [
         Row(
@@ -31,7 +32,7 @@ class DashboardScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                  color: Colors.white,
+                  color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,7 +56,7 @@ class DashboardScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                color: Colors.white,
+                color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -133,7 +134,7 @@ class DashboardScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                color: Colors.white,
+                color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
               ),
               child: const BarChartSample6(),
             ),
