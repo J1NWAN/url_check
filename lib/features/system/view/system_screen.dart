@@ -6,6 +6,6 @@ class SystemScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Spacer();
+    return const Text('시스템');
   }
 }

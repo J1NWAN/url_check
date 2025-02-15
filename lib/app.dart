@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
-import 'package:url_check/features/home/view/home_screen.dart';
+import 'package:url_check/core/router/app_router.dart';
 
 class UrlCheckerApp extends ConsumerWidget {
   const UrlCheckerApp({super.key});
@@ -9,11 +9,12 @@ class UrlCheckerApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeState = ref.watch(themeViewModelProvider);
+    final router = ref.watch(routerProvider);
 
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'URL Checker',
       theme: themeState.themeData,
-      home: const HomeScreen(),
+      routerConfig: router,
     );
   }
 }
