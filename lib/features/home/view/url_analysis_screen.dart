@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_check/core/button/custom_button.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/viewmodel/url_analysis_view_model.dart';
@@ -17,7 +18,7 @@ class UrlAnalysisScreen extends ConsumerWidget {
         // 제목
         Row(
           children: [
-            Text('URL 분석', style: Theme.of(context).textTheme.displaySmall),
+            Text('URL 분석', style: GoogleFonts.notoSansKr(fontSize: 20, fontWeight: FontWeight.bold)),
             const Spacer(),
             CustomButton.primary(
               text: '불러오기',

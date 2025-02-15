@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/view/dashboard_screen.dart';
 import 'package:url_check/features/home/view/url_analysis_screen.dart';
@@ -15,14 +16,22 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('URL Checker'),
+        titleSpacing: 10,
+        title: Text('URL\nChecker', style: GoogleFonts.blackOpsOne(fontSize: 16)),
         backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
         surfaceTintColor: Colors.transparent, // 스크롤 시 색상 오버레이 제거
         scrolledUnderElevation: 0, // 스크롤 시 그림자 제거
+        actions: [
+          const SizedBox(),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.notifications),
+          ),
+        ],
       ),
       body: SizedBox.expand(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: PageView(
             scrollDirection: Axis.vertical,
             controller: viewModel.pageController,

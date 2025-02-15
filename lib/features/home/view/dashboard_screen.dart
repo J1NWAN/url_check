@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/widget/chart_widget.dart';
 
@@ -13,7 +14,7 @@ class DashboardScreen extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('대시보드', style: Theme.of(context).textTheme.displaySmall),
+            Text('대시보드', style: GoogleFonts.notoSansKr(fontSize: 20, fontWeight: FontWeight.bold)),
             Row(
               children: [
                 IconButton(onPressed: () {}, icon: const Icon(Icons.upload_file_outlined)),

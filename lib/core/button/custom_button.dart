@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'enum/button_type.dart';
 
 class CustomButton extends StatefulWidget {
@@ -193,7 +194,7 @@ class _CustomButtonState extends State<CustomButton> {
                           ],
                           Text(
                             widget.text,
-                            style: TextStyle(
+                            style: GoogleFonts.notoSansKr(
                               color: widget.type.textColor,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
