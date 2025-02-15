@@ -6,6 +6,7 @@ import 'package:url_check/features/home/view/dashboard_screen.dart';
 import 'package:url_check/features/home/view/url_analysis_screen.dart';
 import 'package:url_check/features/home/viewmodel/home_view_model.dart';
 import 'package:url_check/features/setting/view/setting_screen.dart';
+import 'package:url_check/features/system/view/system_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -50,11 +51,14 @@ class HomeScreen extends ConsumerWidget {
           if (index == 0) {
             viewModel.pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
           } else if (index == 1) {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const SystemScreen()));
+          } else if (index == 2) {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingScreen()));
           }
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
+          BottomNavigationBarItem(icon: Icon(Icons.storage), label: '시스템'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: '설정'),
         ],
       ),
