@@ -35,6 +35,11 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        onTap: (index) {
+          if (index == 0) {
+            viewModel.pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          }
+        },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: '홈'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: '설정'),
