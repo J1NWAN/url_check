@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_check/core/button/custom_dropdown_button.dart';
+import 'package:url_check/core/button/model/dropdown_config.dart';
+import 'package:url_check/core/datepicker/custom_date_picker.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/widget/chart_widget.dart';
 
@@ -28,22 +31,37 @@ class DashboardScreen extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                  color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(onPressed: () {}, child: const Text('오늘')),
-                    TextButton(onPressed: () {}, child: const Text('주')),
-                    TextButton(onPressed: () {}, child: const Text('월')),
-                    TextButton(onPressed: () {}, child: const Text('년')),
-                  ],
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: CustomDropDownButton(
+                      label: '시스템',
+                      categories: [
+                        DropdownConfig(id: '1', name: '기관홈페이지', color: '0xFF808080'),
+                        DropdownConfig(id: '2', name: '원자력안전정보공개센터', color: '0xFF808080'),
+                        DropdownConfig(id: '3', name: '원자력관계면허·국가기술자격시험', color: '0xFF808080'),
+                        DropdownConfig(id: '4', name: '원자력안전위원회', color: '0xFF808080'),
+                      ],
+                      value: '1',
+                      onChanged: (value) {
+                        print(value);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: CustomDatePicker(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2100),
+                      onDateSelected: (date) {
+                        print('선택된 날짜: $date');
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

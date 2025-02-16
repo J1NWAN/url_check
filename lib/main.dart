@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
-  runApp(
-    const ProviderScope(
-      child: UrlCheckerApp(),
+void main() async {
+  initializeDateFormatting().then(
+    (value) => runApp(
+      const ProviderScope(
+        child: UrlCheckerApp(),
+      ),
     ),
   );
 }
