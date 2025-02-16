@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
+import 'package:url_check/features/system/viewmodel/system_list_view_model.dart';
 
 class SystemListTab extends ConsumerWidget {
   const SystemListTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(systemListViewModelProvider);
+
     return Column(
       children: [
         // 검색 및 필터 영역
@@ -17,11 +20,26 @@ class SystemListTab extends ConsumerWidget {
               // 검색 필드
               Expanded(
                 child: TextField(
+                  onChanged: (value) {
+                    ref.read(systemListViewModelProvider.notifier).updateSearchQuery(value);
+                  },
+                  onTapOutside: (event) {
+                    FocusScope.of(context).unfocus();
+                  },
                   decoration: InputDecoration(
                     hintText: '시스템 검색',
-                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.search),
+                      onPressed: () {
+                        print('search');
+                      },
+                    ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    constraints: const BoxConstraints(
+                      maxHeight: 40,
                     ),
                   ),
                 ),
@@ -32,79 +50,133 @@ class SystemListTab extends ConsumerWidget {
                 onPressed: () {},
                 icon: const Icon(Icons.filter_list),
               ),
-              // 보기 방식 전환 버튼 (리스트/그리드)
+              // 보기 방식 전환 버튼
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.grid_view),
+                onPressed: () {
+                  ref.read(systemListViewModelProvider.notifier).toggleViewType();
+                },
+                icon: Icon(
+                  state.viewType == ViewType.list ? Icons.grid_view : Icons.list,
+                ),
               ),
             ],
           ),
         ),
         // 시스템 목록
         Expanded(
-          child: ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: 10, // 임시 데이터
-            separatorBuilder: (context, index) => const SizedBox(height: 16),
-            itemBuilder: (context, index) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                ),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(16),
-                  leading: CircleAvatar(
-                    backgroundColor: index % 2 == 0 ? Colors.green : Colors.red,
-                    child: Icon(
-                      index % 2 == 0 ? Icons.check : Icons.error,
-                      color: Colors.white,
-                    ),
-                  ),
-                  title: Text('시스템 ${index + 1}'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
-                      Text('URL: https://example${index + 1}.com'),
-                      const SizedBox(height: 4),
-                      Text('마지막 점검: ${DateTime.now().toString().substring(0, 16)}'),
-                    ],
-                  ),
-                  trailing: PopupMenuButton(
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(
-                        value: 'edit',
-                        child: Row(
-                          children: [
-                            Icon(Icons.edit),
-                            SizedBox(width: 8),
-                            Text('수정'),
-                          ],
-                        ),
-                      ),
-                      const PopupMenuItem(
-                        value: 'delete',
-                        child: Row(
-                          children: [
-                            Icon(Icons.delete),
-                            SizedBox(width: 8),
-                            Text('삭제'),
-                          ],
-                        ),
-                      ),
-                    ],
-                    onSelected: (value) {
-                      // 메뉴 선택 처리
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
+          child: state.viewType == ViewType.list ? _buildListView(context, ref) : _buildGridView(context, ref),
         ),
       ],
+    );
+  }
+
+  Widget _buildListView(BuildContext context, WidgetRef ref) {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: 10,
+      separatorBuilder: (context, index) => const SizedBox(height: 16),
+      itemBuilder: (context, index) {
+        return Container(
+          decoration: BoxDecoration(
+            color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            title: Text('시스템 ${index + 1}'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                Text('URL: https://example${index + 1}.com'),
+              ],
+            ),
+            trailing: PopupMenuButton(
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'edit',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit),
+                      SizedBox(width: 8),
+                      Text('수정'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete),
+                      SizedBox(width: 8),
+                      Text('삭제'),
+                    ],
+                  ),
+                ),
+              ],
+              onSelected: (value) {
+                print(value);
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGridView(BuildContext context, WidgetRef ref) {
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 16,
+        crossAxisSpacing: 16,
+        childAspectRatio: 1.3,
+      ),
+      itemCount: 10,
+      itemBuilder: (context, index) {
+        return Container(
+          decoration: BoxDecoration(
+            color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 8),
+              Text(
+                '시스템 ${index + 1}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'https://example${index + 1}.com',
+                style: const TextStyle(fontSize: 12),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit, size: 20),
+                    onPressed: () {
+                      print('edit $index');
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, size: 20),
+                    onPressed: () {
+                      print('delete $index');
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
