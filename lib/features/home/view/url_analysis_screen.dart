@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_check/core/button/custom_button.dart';
+import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/viewmodel/url_analysis_view_model.dart';
 
@@ -38,8 +39,12 @@ class UrlAnalysisScreen extends ConsumerWidget {
           onChanged: (value) {
             ref.read(urlAnalysisViewModelProvider.notifier).updateUrl(value);
           },
+          onTapOutside: (event) {
+            FocusScope.of(context).unfocus();
+          },
           decoration: InputDecoration(
             hintText: 'https://example.com',
+            hintStyle: CustomTextTheme.theme.bodyLarge,
             prefixIcon: const Icon(Icons.link),
             suffixIcon: IconButton(
               icon: const Icon(Icons.search),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/system/viewmodel/system_list_view_model.dart';
 
@@ -28,6 +29,7 @@ class SystemListTab extends ConsumerWidget {
                   },
                   decoration: InputDecoration(
                     hintText: '시스템 검색',
+                    hintStyle: CustomTextTheme.theme.bodyMedium,
                     suffixIcon: IconButton(
                       icon: const Icon(Icons.search),
                       onPressed: () {
@@ -84,33 +86,33 @@ class SystemListTab extends ConsumerWidget {
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            title: Text('시스템 ${index + 1}'),
+            title: Text('시스템 ${index + 1}', style: CustomTextTheme.theme.bodyLarge),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8),
-                Text('URL: https://example${index + 1}.com'),
+                Text('URL: https://example${index + 1}.com', style: CustomTextTheme.theme.bodySmall),
               ],
             ),
             trailing: PopupMenuButton(
               itemBuilder: (context) => [
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'edit',
                   child: Row(
                     children: [
-                      Icon(Icons.edit),
-                      SizedBox(width: 8),
-                      Text('수정'),
+                      const Icon(Icons.edit),
+                      const SizedBox(width: 12),
+                      Text('수정', style: CustomTextTheme.theme.bodyMedium),
                     ],
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'delete',
                   child: Row(
                     children: [
-                      Icon(Icons.delete),
-                      SizedBox(width: 8),
-                      Text('삭제'),
+                      const Icon(Icons.delete),
+                      const SizedBox(width: 12),
+                      Text('삭제', style: CustomTextTheme.theme.bodyMedium),
                     ],
                   ),
                 ),
@@ -148,12 +150,12 @@ class SystemListTab extends ConsumerWidget {
               const SizedBox(height: 8),
               Text(
                 '시스템 ${index + 1}',
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: CustomTextTheme.theme.bodyLarge,
               ),
               const SizedBox(height: 4),
               Text(
                 'https://example${index + 1}.com',
-                style: const TextStyle(fontSize: 12),
+                style: CustomTextTheme.theme.bodySmall,
               ),
               const SizedBox(height: 8),
               Row(
