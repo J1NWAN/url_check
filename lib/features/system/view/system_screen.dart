@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/features/system/view/tab/system_list_tab.dart';
+import 'package:url_check/features/system/viewmodel/system_list_view_model.dart';
 
 class SystemScreen extends ConsumerWidget {
   const SystemScreen({super.key});
@@ -32,7 +33,7 @@ class SystemScreen extends ConsumerWidget {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // TODO: 시스템 등록 다이얼로그 구현
+            ref.read(systemListViewModelProvider.notifier).addSystem(context);
           },
           child: const Icon(Icons.add),
         ),

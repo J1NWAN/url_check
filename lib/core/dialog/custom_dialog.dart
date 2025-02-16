@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_check/core/button/custom_dropdown_button.dart';
 import 'package:url_check/core/dialog/custom_dialog_overlay.dart';
 import 'package:url_check/core/dialog/enum/dialog_type.dart';
+import 'package:url_check/core/textfield/model/text_field_config.dart';
 import 'package:url_check/core/dialog/model/dialog_config.dart';
 
 /*
@@ -23,6 +24,7 @@ class CustomDialog {
     required String title,
     required String content,
     CustomDropDownButton? dropdown,
+    List<CustomTextField>? textFields,
     Color? backgroundColor,
     IconData? icon,
     bool showIcon = true,
@@ -35,6 +37,7 @@ class CustomDialog {
       title: title,
       content: content,
       dropdown: dropdown,
+      textFields: textFields,
       backgroundColor: backgroundColor,
       icon: icon,
       showIcon: showIcon,

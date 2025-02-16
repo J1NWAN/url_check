@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_check/core/button/custom_button.dart';
 import 'package:url_check/core/dialog/model/dialog_config.dart';
+import 'package:url_check/core/snackbar/custom_snackbar.dart';
+import 'package:url_check/core/snackbar/enum/snackbar_type.dart';
 
 class CustomDialogOverlay extends StatefulWidget {
   final DialogConfig config;
@@ -71,13 +73,14 @@ class _CustomDialogOverlayState extends State<CustomDialogOverlay> with SingleTi
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (widget.config.showIcon ?? true)
+                  if (widget.config.showIcon ?? true) ...[
                     Icon(
                       widget.config.icon,
                       size: 48,
                       color: Colors.grey[800],
                     ),
-                  if (widget.config.showIcon ?? true) const SizedBox(height: 16),
+                    const SizedBox(height: 16),
+                  ],
                   SizedBox(
                     width: double.infinity,
                     child: Text(
@@ -99,6 +102,50 @@ class _CustomDialogOverlayState extends State<CustomDialogOverlay> with SingleTi
                     const SizedBox(height: 24),
                     widget.config.dropdown!,
                   ],
+                  if (widget.config.textFields != null) ...[
+                    const SizedBox(height: 24),
+                    ...widget.config.textFields!.map((textField) => Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  textField.label,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                if (textField.isRequired) ...[
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '*',
+                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Colors.red,
+                                        ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            TextField(
+                              controller: textField.controller,
+                              keyboardType: textField.keyboardType,
+                              obscureText: textField.obscureText,
+                              maxLines: textField.maxLines,
+                              maxLength: textField.maxLength,
+                              decoration: InputDecoration(
+                                hintText: textField.hintText,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        )),
+                  ],
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -118,6 +165,22 @@ class _CustomDialogOverlayState extends State<CustomDialogOverlay> with SingleTi
                           text: widget.config.confirmText!,
                           height: 40,
                           onPressed: () {
+                            if (widget.config.textFields != null) {
+                              final hasEmptyRequired = widget.config.textFields!
+                                  .where((field) => field.isRequired)
+                                  .any((field) => field.controller.text.isEmpty);
+
+                              if (hasEmptyRequired) {
+                                CustomSnackBar.show(
+                                  context,
+                                  title: '오류',
+                                  message: '필수 항목을 모두 입력해주세요.',
+                                  type: SnackBarType.error,
+                                );
+                                return;
+                              }
+                            }
+
                             widget.config.onConfirm?.call();
                             Navigator.of(context).pop(true);
                           },
