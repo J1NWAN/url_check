@@ -67,7 +67,7 @@ class _CustomDialogOverlayState extends State<CustomDialogOverlay> with SingleTi
               margin: const EdgeInsets.symmetric(horizontal: 32),
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: widget.config.backgroundColor,
+                color: widget.config.backgroundColor ?? Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(

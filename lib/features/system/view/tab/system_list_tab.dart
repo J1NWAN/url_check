@@ -118,7 +118,11 @@ class SystemListTab extends ConsumerWidget {
                 ),
               ],
               onSelected: (value) {
-                print(value);
+                if (value == 'edit') {
+                  ref.read(systemListViewModelProvider.notifier).editSystem(context, '${index + 1}');
+                } else if (value == 'delete') {
+                  ref.read(systemListViewModelProvider.notifier).deleteSystem(context, '${index + 1}');
+                }
               },
             ),
           ),
@@ -164,13 +168,13 @@ class SystemListTab extends ConsumerWidget {
                   IconButton(
                     icon: const Icon(Icons.edit, size: 20),
                     onPressed: () {
-                      print('edit $index');
+                      ref.read(systemListViewModelProvider.notifier).editSystem(context, '${index + 1}');
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, size: 20),
                     onPressed: () {
-                      print('delete $index');
+                      ref.read(systemListViewModelProvider.notifier).deleteSystem(context, '${index + 1}');
                     },
                   ),
                 ],

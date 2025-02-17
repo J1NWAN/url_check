@@ -60,7 +60,6 @@ class SystemListViewModel extends _$SystemListViewModel {
       title: '시스템 추가',
       content: '추가할 시스템 정보를 입력해주세요.',
       showIcon: false,
-      backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
       textFields: [
         CustomTextField(
           label: '시스템 한글명',
@@ -105,6 +104,71 @@ class SystemListViewModel extends _$SystemListViewModel {
             type: SnackBarType.success,
           );
         }
+      },
+    );
+  }
+
+  void deleteSystem(BuildContext context, String id) {
+    CustomDialog.show(
+      context,
+      title: '삭제',
+      content: '삭제하시겠습니까?',
+      showIcon: false,
+      confirmText: '삭제',
+      cancelText: '취소',
+      onConfirm: () {
+        // 데이터베이스에서 삭제
+        CustomSnackBar.show(
+          context,
+          title: '완료',
+          message: '시스템이 삭제되었습니다.',
+          type: SnackBarType.success,
+        );
+      },
+    );
+  }
+
+  void editSystem(BuildContext context, String id) {
+    final krNameController = TextEditingController();
+    final enNameController = TextEditingController();
+    final urlController = TextEditingController();
+
+    CustomDialog.show(
+      context,
+      title: '수정',
+      content: '수정할 시스템 정보를 입력해주세요.',
+      showIcon: false,
+      textFields: [
+        CustomTextField(
+          label: '시스템 한글명',
+          hintText: '예시: 기관홈페이지',
+          controller: krNameController,
+          isRequired: true,
+        ),
+        CustomTextField(
+          label: '시스템 영문명',
+          hintText: '예시: WWW',
+          controller: enNameController,
+          keyboardType: TextInputType.url,
+          isRequired: true,
+        ),
+        CustomTextField(
+          label: 'URL',
+          hintText: '예시: https://www.kins.re.kr',
+          controller: urlController,
+          keyboardType: TextInputType.url,
+        ),
+      ],
+      confirmText: '수정',
+      cancelText: '취소',
+      onConfirm: () {
+        // 데이터베이스에서 수정
+        CustomSnackBar.show(
+          context,
+          title: '완료',
+          message: '시스템이 수정되었습니다.',
+          type: SnackBarType.success,
+        );
       },
     );
   }
