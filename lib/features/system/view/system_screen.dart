@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/features/system/view/tab/system_list_tab.dart';
 import 'package:url_check/features/system/viewmodel/system_list_view_model.dart';
+import 'package:url_check/features/system/view/tab/inspection_history_tab.dart';
 
 class SystemScreen extends ConsumerWidget {
   const SystemScreen({super.key});
@@ -25,7 +26,7 @@ class SystemScreen extends ConsumerWidget {
                 children: [
                   SystemListTab(),
                   Center(child: Text('모니터링 탭')), // 추후 구현
-                  Center(child: Text('점검 이력 탭')), // 추후 구현
+                  InspectionHistoryTab(),
                 ],
               ),
             ),
