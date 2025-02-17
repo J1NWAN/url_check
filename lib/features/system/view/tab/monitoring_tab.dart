@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
-import 'package:url_check/features/system/view/system_detail_screen.dart';
+import 'package:url_check/features/system/view/tab/view/monitoring_detail_screen.dart';
 
 class MonitoringTab extends ConsumerWidget {
   const MonitoringTab({super.key});
@@ -109,15 +110,16 @@ class MonitoringTab extends ConsumerWidget {
                               const SizedBox(width: 16),
                               TextButton.icon(
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const SystemDetailScreen(
-                                        systemName: '기관홈페이지 (WWW)',
-                                        systemUrl: 'https://www.kins.re.kr',
-                                      ),
-                                    ),
-                                  );
+                                  context.push('/system/detail');
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => const SystemDetailScreen(
+                                  //       systemName: '기관홈페이지 (WWW)',
+                                  //       systemUrl: 'https://www.kins.re.kr',
+                                  //     ),
+                                  //   ),
+                                  // );
                                 },
                                 icon: const Icon(Icons.analytics),
                                 label: const Text('상세 통계'),

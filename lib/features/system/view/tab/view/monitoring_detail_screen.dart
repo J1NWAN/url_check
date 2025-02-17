@@ -18,34 +18,23 @@ class SystemDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          systemName,
+          '상세 통계',
           style: GoogleFonts.notoSansKr(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // 메뉴 추가 다이얼로그
-            },
-            icon: const Icon(Icons.add),
-          ),
-        ],
       ),
       body: Column(
         children: [
+          Container(
+            padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
+            width: double.infinity,
+            child: Text(systemName, style: CustomTextTheme.theme.bodyLarge),
+          ),
           // 시스템 요약 정보
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.grey.withOpacity(0.2),
-                ),
-              ),
-            ),
             child: Row(
               children: [
                 Expanded(
@@ -178,25 +167,33 @@ class SystemDetailScreen extends ConsumerWidget {
     required IconData icon,
     Color? valueColor,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(icon, size: 16),
-            const SizedBox(width: 8),
-            Text(title, style: CustomTextTheme.theme.bodySmall),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: CustomTextTheme.theme.headlineMedium?.copyWith(
-            color: valueColor,
-            fontWeight: FontWeight.bold,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 16),
+              const SizedBox(width: 8),
+              Text(title, style: CustomTextTheme.theme.bodySmall),
+            ],
           ),
-        ),
-      ],
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: CustomTextTheme.theme.headlineMedium?.copyWith(
+              color: valueColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
