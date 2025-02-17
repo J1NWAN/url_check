@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_check/core/theme/theme_view_model.dart';
-import 'package:url_check/features/home/view/home_screen.dart';
-import 'package:url_check/features/home/viewmodel/home_view_model.dart';
-import 'package:url_check/features/setting/view/setting_screen.dart';
-import 'package:url_check/features/system/view/system_screen.dart';
 
 class MainLayout extends StatelessWidget {
   final Widget child;
