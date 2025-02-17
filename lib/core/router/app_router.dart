@@ -3,8 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/core/layout/main_layout.dart';
 import 'package:url_check/features/home/view/home_screen.dart';
+import 'package:url_check/features/system/view/tab/view/monitoring_detail_screen.dart';
 import 'package:url_check/features/system/view/system_screen.dart';
 import 'package:url_check/features/setting/view/setting_screen.dart';
+import 'package:url_check/core/router/transition/custom_page_transition.dart';
 
 final routerProvider = Provider((ref) {
   return GoRouter(
@@ -12,42 +14,48 @@ final routerProvider = Provider((ref) {
     routes: [
       ShellRoute(
         builder: (context, state, child) {
-          return MainLayout(
-            currentIndex: _getCurrentIndex(state.uri.toString()),
-            child: child,
-          );
+          if (state.uri.toString() != "/system/detail") {
+            return MainLayout(
+              currentIndex: _getCurrentIndex(state.uri.toString()),
+              child: child,
+            );
+          }
+          return child;
         },
         routes: [
           GoRoute(
             path: '/',
-            pageBuilder: (context, state) => NoTransitionPage(
+            pageBuilder: (context, state) => CustomPageTransition.noTransition(
               key: state.pageKey,
               child: const HomeScreen(),
             ),
           ),
           GoRoute(
             path: '/system',
-            pageBuilder: (context, state) => NoTransitionPage(
+            pageBuilder: (context, state) => CustomPageTransition.noTransition(
               key: state.pageKey,
               child: const SystemScreen(),
             ),
+            routes: [
+              GoRoute(
+                path: 'detail',
+                pageBuilder: (context, state) => CustomPageTransition.slideTransition(
+                  key: state.pageKey,
+                  child: const SystemDetailScreen(
+                    systemName: '기관홈페이지 (WWW)',
+                    systemUrl: 'https://www.kins.re.kr',
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
       GoRoute(
         path: '/settings',
-        pageBuilder: (context, state) => CustomTransitionPage(
+        pageBuilder: (context, state) => CustomPageTransition.slideTransition(
           key: state.pageKey,
           child: const SettingScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position: Tween(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(CurveTween(curve: Curves.easeInOut).animate(animation)),
-              child: child,
-            );
-          },
         ),
       ),
     ],
