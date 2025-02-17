@@ -95,6 +95,16 @@ class SystemListViewModel extends _$SystemListViewModel {
         print(url);
 
         // ...
+        if (krName.isNotEmpty && enName.isNotEmpty && url.isNotEmpty) {
+          // 데이터베이스에 저장
+
+          CustomSnackBar.show(
+            context,
+            title: '완료',
+            message: '시스템이 추가되었습니다.',
+            type: SnackBarType.success,
+          );
+        }
       },
     );
   }
