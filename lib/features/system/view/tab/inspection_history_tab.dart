@@ -4,14 +4,51 @@ import 'package:url_check/core/datepicker/custom_date_picker.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/system/viewmodel/inspection_history_view_model.dart';
+import 'package:intl/intl.dart';
 
 class InspectionHistoryTab extends ConsumerWidget {
   const InspectionHistoryTab({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(inspectionHistoryViewModelProvider);
+
     return Column(
       children: [
+        // 날짜 범위 선택
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Row(
+            children: [
+              Expanded(
+                child: CustomDatePicker(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                  onDateSelected: (date) {
+                    ref.read(inspectionHistoryViewModelProvider.notifier).updateDateRange(date, state.endDate);
+                  },
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Text('~'),
+              ),
+              Expanded(
+                child: CustomDatePicker(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                  onDateSelected: (date) {
+                    ref.read(inspectionHistoryViewModelProvider.notifier).updateDateRange(state.startDate, date);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
         // 검색 및 필터 영역
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -21,7 +58,7 @@ class InspectionHistoryTab extends ConsumerWidget {
               Expanded(
                 child: TextField(
                   onChanged: (value) {
-                    // 검색 기능 구현
+                    ref.read(inspectionHistoryViewModelProvider.notifier).updateSearchQuery(value);
                   },
                   onTapOutside: (event) {
                     FocusScope.of(context).unfocus();
@@ -45,18 +82,9 @@ class InspectionHistoryTab extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              // 날짜 필터 버튼
-              Expanded(
-                child: CustomDatePicker(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
-                  onDateSelected: (date) {
-                    print('선택된 날짜: $date');
-                  },
-                ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.filter_list),
               ),
             ],
           ),

@@ -47,11 +47,6 @@ class SystemListTab extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              // 정렬 필터 버튼
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.filter_list),
-              ),
               // 보기 방식 전환 버튼
               IconButton(
                 onPressed: () {
