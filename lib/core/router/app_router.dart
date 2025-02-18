@@ -7,6 +7,7 @@ import 'package:url_check/features/system/view/tab/view/monitoring_detail_screen
 import 'package:url_check/features/system/view/system_screen.dart';
 import 'package:url_check/features/setting/view/setting_screen.dart';
 import 'package:url_check/core/router/transition/custom_page_transition.dart';
+import 'package:url_check/features/system/view/tab/view/system_list_detail_screen.dart';
 
 final routerProvider = Provider((ref) {
   return GoRouter(
@@ -14,7 +15,7 @@ final routerProvider = Provider((ref) {
     routes: [
       ShellRoute(
         builder: (context, state, child) {
-          if (state.uri.toString() != "/system/detail") {
+          if (!state.uri.toString().contains("detail")) {
             return MainLayout(
               currentIndex: _getCurrentIndex(state.uri.toString()),
               child: child,
@@ -38,7 +39,14 @@ final routerProvider = Provider((ref) {
             ),
             routes: [
               GoRoute(
-                path: 'detail',
+                path: 'systemList/detail',
+                pageBuilder: (context, state) => CustomPageTransition.slideTransition(
+                  key: state.pageKey,
+                  child: const SystemListDetailScreen(),
+                ),
+              ),
+              GoRoute(
+                path: 'monitoring/detail',
                 pageBuilder: (context, state) => CustomPageTransition.slideTransition(
                   key: state.pageKey,
                   child: const SystemDetailScreen(

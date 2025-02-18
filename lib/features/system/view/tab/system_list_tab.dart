@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/system/viewmodel/system_list_view_model.dart';
@@ -79,46 +80,51 @@ class SystemListTab extends ConsumerWidget {
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: Colors.grey.withOpacity(0.2)),
           ),
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            title: Text('시스템 ${index + 1}', style: CustomTextTheme.theme.bodyLarge),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Text('URL: https://example${index + 1}.com', style: CustomTextTheme.theme.bodySmall),
-              ],
-            ),
-            trailing: PopupMenuButton(
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'edit',
-                  child: Row(
-                    children: [
-                      const Icon(Icons.edit),
-                      const SizedBox(width: 12),
-                      Text('수정', style: CustomTextTheme.theme.bodyMedium),
-                    ],
+          child: InkWell(
+            onTap: () {
+              context.push('/system/systemList/detail');
+            },
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              title: Text('시스템 ${index + 1}', style: CustomTextTheme.theme.bodyLarge),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 8),
+                  Text('URL: https://example${index + 1}.com', style: CustomTextTheme.theme.bodySmall),
+                ],
+              ),
+              trailing: PopupMenuButton(
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        const Icon(Icons.edit),
+                        const SizedBox(width: 12),
+                        Text('수정', style: CustomTextTheme.theme.bodyMedium),
+                      ],
+                    ),
                   ),
-                ),
-                PopupMenuItem(
-                  value: 'delete',
-                  child: Row(
-                    children: [
-                      const Icon(Icons.delete),
-                      const SizedBox(width: 12),
-                      Text('삭제', style: CustomTextTheme.theme.bodyMedium),
-                    ],
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        const Icon(Icons.delete),
+                        const SizedBox(width: 12),
+                        Text('삭제', style: CustomTextTheme.theme.bodyMedium),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-              onSelected: (value) {
-                if (value == 'edit') {
-                  ref.read(systemListViewModelProvider.notifier).editSystem(context, '${index + 1}');
-                } else if (value == 'delete') {
-                  ref.read(systemListViewModelProvider.notifier).deleteSystem(context, '${index + 1}');
-                }
-              },
+                ],
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    ref.read(systemListViewModelProvider.notifier).editSystem(context, '${index + 1}');
+                  } else if (value == 'delete') {
+                    ref.read(systemListViewModelProvider.notifier).deleteSystem(context, '${index + 1}');
+                  }
+                },
+              ),
             ),
           ),
         );
