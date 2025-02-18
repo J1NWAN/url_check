@@ -4,7 +4,6 @@ import 'package:url_check/core/datepicker/custom_date_picker.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/system/viewmodel/inspection_history_view_model.dart';
-import 'package:intl/intl.dart';
 
 class InspectionHistoryTab extends ConsumerWidget {
   const InspectionHistoryTab({super.key});

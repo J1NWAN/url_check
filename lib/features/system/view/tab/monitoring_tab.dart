@@ -110,7 +110,7 @@ class MonitoringTab extends ConsumerWidget {
                               const SizedBox(width: 16),
                               TextButton.icon(
                                 onPressed: () {
-                                  context.push('/system/detail');
+                                  context.push('/system/monitoring/detail');
                                   // Navigator.push(
                                   //   context,
                                   //   MaterialPageRoute(
