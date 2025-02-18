@@ -13,10 +13,49 @@ class SystemListDetailScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('기관홈페이지 (WWW)', style: CustomTextTheme.theme.titleMedium),
+        title: Text('시스템 상세', style: CustomTextTheme.theme.titleMedium),
       ),
       body: Column(
         children: [
+          // 시스템 정보
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey.withOpacity(0.2)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.home, size: 20),
+                      const SizedBox(width: 8),
+                      Text('기관홈페이지 (WWW)', style: CustomTextTheme.theme.bodySmall),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.link, size: 20),
+                      const SizedBox(width: 8),
+                      Text(
+                        'https://www.example.com',
+                        style: CustomTextTheme.theme.headlineMedium?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           // 검색 및 보기 방식 전환
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -143,7 +182,7 @@ class SystemListDetailScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8),
-                Text('URL: https://example${index + 1}.com', style: CustomTextTheme.theme.bodySmall),
+                Text('PATH: /${index + 1}', style: CustomTextTheme.theme.bodySmall),
               ],
             ),
             trailing: PopupMenuButton(
