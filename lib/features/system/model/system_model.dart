@@ -10,6 +10,7 @@ class SystemModel with _$SystemModel {
     required String id,
     @JsonKey(name: 'system_name_en') String? systemNameEn,
     @JsonKey(name: 'system_name_ko') String? systemNameKo,
+    @JsonKey(name: 'url') String? url,
     @JsonKey(name: 'created_at', fromJson: _timestampFromJson, toJson: _timestampToJson) DateTime? createdAt,
     @JsonKey(name: 'updated_at', fromJson: _timestampFromJson, toJson: _timestampToJson) DateTime? updatedAt,
   }) = _SystemModel;
@@ -21,6 +22,7 @@ class SystemModel with _$SystemModel {
         id: '',
         systemNameEn: null,
         systemNameKo: null,
+        url: null,
         createdAt: null,
         updatedAt: null,
       );

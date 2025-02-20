@@ -121,7 +121,7 @@ class _SystemListTabState extends ConsumerState<SystemListTab> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 8),
-                  Text(system.systemNameEn ?? '', style: CustomTextTheme.theme.bodySmall),
+                  Text('URL: ${system.url}', style: CustomTextTheme.theme.bodySmall),
                 ],
               ),
               trailing: PopupMenuButton(
@@ -189,44 +189,49 @@ class _SystemListTabState extends ConsumerState<SystemListTab> {
       itemCount: state.systemList.length,
       itemBuilder: (context, index) {
         final system = state.systemList[index];
-        return Container(
-          decoration: BoxDecoration(
-            color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.withOpacity(0.2)),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 8),
-              Text(
-                system.systemNameKo ?? '',
-                style: CustomTextTheme.theme.bodyLarge,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                system.systemNameEn ?? '',
-                style: CustomTextTheme.theme.bodySmall,
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit, size: 20),
-                    onPressed: () {
-                      ref.read(systemListViewModelProvider.notifier).editSystem(context, system.id);
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, size: 20),
-                    onPressed: () {
-                      ref.read(systemListViewModelProvider.notifier).deleteSystem(context, system.id);
-                    },
-                  ),
-                ],
-              ),
-            ],
+        return InkWell(
+          onTap: () {
+            context.push('/system/systemList/detail', extra: system);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: Colors.grey.withOpacity(0.2)),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 8),
+                Text(
+                  system.systemNameKo ?? '',
+                  style: CustomTextTheme.theme.bodyLarge,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${system.url}',
+                  style: CustomTextTheme.theme.bodySmall,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit, size: 20),
+                      onPressed: () {
+                        ref.read(systemListViewModelProvider.notifier).editSystem(context, system.id);
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, size: 20),
+                      onPressed: () {
+                        ref.read(systemListViewModelProvider.notifier).deleteSystem(context, system.id);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },

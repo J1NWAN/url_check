@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/core/layout/main_layout.dart';
 import 'package:url_check/features/home/view/home_screen.dart';
+import 'package:url_check/features/system/model/system_model.dart';
 import 'package:url_check/features/system/view/tab/view/monitoring_detail_screen.dart';
 import 'package:url_check/features/system/view/system_screen.dart';
 import 'package:url_check/features/setting/view/setting_screen.dart';
@@ -42,7 +42,7 @@ final routerProvider = Provider((ref) {
                 path: 'systemList/detail',
                 pageBuilder: (context, state) => CustomPageTransition.slideTransition(
                   key: state.pageKey,
-                  child: const SystemListDetailScreen(),
+                  child: SystemListDetailScreen(system: state.extra as SystemModel),
                 ),
               ),
               GoRoute(

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
+import 'package:url_check/features/system/model/system_model.dart';
 import 'package:url_check/features/system/viewmodel/system_detail_view_model.dart';
 
 class SystemListDetailScreen extends ConsumerWidget {
-  const SystemListDetailScreen({super.key});
+  final SystemModel system;
+
+  const SystemListDetailScreen({super.key, required this.system});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +37,7 @@ class SystemListDetailScreen extends ConsumerWidget {
                     children: [
                       const Icon(Icons.home, size: 20),
                       const SizedBox(width: 8),
-                      Text('기관홈페이지 (WWW)', style: CustomTextTheme.theme.bodySmall),
+                      Text('${system.systemNameKo ?? ''} (${system.systemNameEn ?? ''})', style: CustomTextTheme.theme.bodySmall),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -43,7 +46,7 @@ class SystemListDetailScreen extends ConsumerWidget {
                       const Icon(Icons.link, size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        'https://www.example.com',
+                        system.url ?? '',
                         style: CustomTextTheme.theme.headlineMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
