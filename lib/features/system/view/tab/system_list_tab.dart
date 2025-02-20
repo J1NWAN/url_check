@@ -5,11 +5,25 @@ import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/system/viewmodel/system_list_view_model.dart';
 
-class SystemListTab extends ConsumerWidget {
+class SystemListTab extends ConsumerStatefulWidget {
   const SystemListTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SystemListTab> createState() => _SystemListTabState();
+}
+
+class _SystemListTabState extends ConsumerState<SystemListTab> {
+  @override
+  void initState() {
+    super.initState();
+    // 위젯이 처음 생성될 때 초기화
+    Future.microtask(() {
+      ref.read(systemListViewModelProvider.notifier).initState();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(systemListViewModelProvider);
 
     return Column(
@@ -69,11 +83,27 @@ class SystemListTab extends ConsumerWidget {
   }
 
   Widget _buildListView(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(systemListViewModelProvider);
+
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.systemList.isEmpty) {
+      return Center(
+        child: Text(
+          state.searchQuery.isEmpty ? '등록된 시스템이 없습니다.' : '검색 결과가 없습니다.',
+          style: CustomTextTheme.theme.bodyMedium,
+        ),
+      );
+    }
+
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: 10,
+      itemCount: state.systemList.length,
       separatorBuilder: (context, index) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
+        final system = state.systemList[index];
         return Container(
           decoration: BoxDecoration(
             color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
@@ -82,16 +112,16 @@ class SystemListTab extends ConsumerWidget {
           ),
           child: InkWell(
             onTap: () {
-              context.push('/system/systemList/detail');
+              context.push('/system/systemList/detail', extra: system);
             },
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              title: Text('시스템 ${index + 1}', style: CustomTextTheme.theme.bodyLarge),
+              title: Text(system.systemNameKo ?? '', style: CustomTextTheme.theme.bodyLarge),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 8),
-                  Text('URL: https://example${index + 1}.com', style: CustomTextTheme.theme.bodySmall),
+                  Text(system.systemNameEn ?? '', style: CustomTextTheme.theme.bodySmall),
                 ],
               ),
               trailing: PopupMenuButton(
@@ -133,6 +163,21 @@ class SystemListTab extends ConsumerWidget {
   }
 
   Widget _buildGridView(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(systemListViewModelProvider);
+
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.systemList.isEmpty) {
+      return Center(
+        child: Text(
+          state.searchQuery.isEmpty ? '등록된 시스템이 없습니다.' : '검색 결과가 없습니다.',
+          style: CustomTextTheme.theme.bodyMedium,
+        ),
+      );
+    }
+
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -141,8 +186,9 @@ class SystemListTab extends ConsumerWidget {
         crossAxisSpacing: 16,
         childAspectRatio: 1.3,
       ),
-      itemCount: 10,
+      itemCount: state.systemList.length,
       itemBuilder: (context, index) {
+        final system = state.systemList[index];
         return Container(
           decoration: BoxDecoration(
             color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
@@ -154,12 +200,12 @@ class SystemListTab extends ConsumerWidget {
             children: [
               const SizedBox(height: 8),
               Text(
-                '시스템 ${index + 1}',
+                system.systemNameKo ?? '',
                 style: CustomTextTheme.theme.bodyLarge,
               ),
               const SizedBox(height: 4),
               Text(
-                'https://example${index + 1}.com',
+                system.systemNameEn ?? '',
                 style: CustomTextTheme.theme.bodySmall,
               ),
               const SizedBox(height: 8),
@@ -169,13 +215,13 @@ class SystemListTab extends ConsumerWidget {
                   IconButton(
                     icon: const Icon(Icons.edit, size: 20),
                     onPressed: () {
-                      ref.read(systemListViewModelProvider.notifier).editSystem(context, '${index + 1}');
+                      ref.read(systemListViewModelProvider.notifier).editSystem(context, system.id);
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, size: 20),
                     onPressed: () {
-                      ref.read(systemListViewModelProvider.notifier).deleteSystem(context, '${index + 1}');
+                      ref.read(systemListViewModelProvider.notifier).deleteSystem(context, system.id);
                     },
                   ),
                 ],

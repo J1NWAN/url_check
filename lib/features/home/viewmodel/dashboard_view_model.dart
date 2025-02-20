@@ -33,13 +33,14 @@ class DashboardViewModel extends _$DashboardViewModel {
   }
 
   Future<void> _initSystems() async {
-    final systems = SystemRepository().getSystemsStream();
+    final repository = ref.watch(systemRepositoryProvider);
+    final systems = repository.fetchSystems();
 
     systems.listen((snapshot) {
       final systems = snapshot.map((doc) {
         return DropdownConfig(
           id: doc.id,
-          name: doc.systemNameKo,
+          name: doc.systemNameKo ?? '',
           color: '0xFF808080',
         );
       }).toList();
