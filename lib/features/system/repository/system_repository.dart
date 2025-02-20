@@ -27,16 +27,6 @@ class SystemRepository {
     }
   }
 
-  // 시스템 목록 카운트
-  Future<int> fetchSystemCount() async {
-    try {
-      final snapshot = await _firestore.collection('system').count().get();
-      return snapshot.count ?? 0;
-    } catch (e) {
-      throw Exception("시스템 목록 카운트 조회 실패: $e");
-    }
-  }
-
   // 시스템 등록
   Future<void> createSystem(SystemModel system) async {
     try {
