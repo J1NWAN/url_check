@@ -69,3 +69,28 @@ build/
 .history
 .svn/
 migrate_working_dir/
+
+# Firebase 설정 파일
+firebase.json
+.firebaserc
+firebase-debug.log
+lib/firebase_options.dart
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# 환경 설정 파일
+.env
+.env.*
+*.env
+
+# 키 저장소 파일
+*.jks
+*.keystore
+*.p12
+key.properties
+upload-keystore.jks
+
+# 빌드 및 배포 관련
+.firebase/
+firebase-debug.*.log
+firebase-export-*

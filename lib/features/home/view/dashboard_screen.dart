@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_check/core/button/custom_dropdown_button.dart';
-import 'package:url_check/core/button/model/dropdown_config.dart';
 import 'package:url_check/core/datepicker/custom_date_picker.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/widget/chart_widget.dart';
+import 'package:url_check/features/home/viewmodel/dashboard_view_model.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final dashboardState = ref.watch(dashboardViewModelProvider);
+
     return Column(
       children: [
         Row(
@@ -38,15 +40,12 @@ class DashboardScreen extends ConsumerWidget {
                   Expanded(
                     child: CustomDropDownButton(
                       label: '시스템',
-                      categories: [
-                        DropdownConfig(id: '1', name: '기관홈페이지', color: '0xFF808080'),
-                        DropdownConfig(id: '2', name: '원자력안전정보공개센터', color: '0xFF808080'),
-                        DropdownConfig(id: '3', name: '원자력관계면허·국가기술자격시험', color: '0xFF808080'),
-                        DropdownConfig(id: '4', name: '원자력안전위원회', color: '0xFF808080'),
-                      ],
-                      value: '1',
+                      categories: dashboardState.systems,
+                      value: dashboardState.selectedSystemId ?? '',
                       onChanged: (value) {
-                        print(value);
+                        if (value.isNotEmpty) {
+                          ref.read(dashboardViewModelProvider.notifier).updateSelectedSystem(value);
+                        }
                       },
                     ),
                   ),
