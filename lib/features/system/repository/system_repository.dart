@@ -70,7 +70,6 @@ class SystemRepository {
         return list;
       });
     } catch (e) {
-      print('Error fetching system menu: $e'); // 에러 상세 출력
       throw Exception("시스템 메뉴 조회 실패: $e");
     }
   }
