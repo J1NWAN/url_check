@@ -5,13 +5,27 @@ import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/system/model/system_model.dart';
 import 'package:url_check/features/system/viewmodel/system_detail_view_model.dart';
 
-class SystemListDetailScreen extends ConsumerWidget {
+class SystemListDetailScreen extends ConsumerStatefulWidget {
   final SystemModel system;
 
   const SystemListDetailScreen({super.key, required this.system});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SystemListDetailScreen> createState() => _SystemListDetailScreenState();
+}
+
+class _SystemListDetailScreenState extends ConsumerState<SystemListDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 위젯이 처음 생성될 때 초기화
+    Future.microtask(() {
+      ref.read(systemDetailViewModelProvider.notifier).initState(widget.system.systemNameEn ?? '');
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(systemDetailViewModelProvider);
 
     return Scaffold(
@@ -37,7 +51,8 @@ class SystemListDetailScreen extends ConsumerWidget {
                     children: [
                       const Icon(Icons.home, size: 20),
                       const SizedBox(width: 8),
-                      Text('${system.systemNameKo ?? ''} (${system.systemNameEn ?? ''})', style: CustomTextTheme.theme.bodySmall),
+                      Text('${widget.system.systemNameKo ?? ''} (${widget.system.systemNameEn ?? ''})',
+                          style: CustomTextTheme.theme.bodySmall),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -46,7 +61,7 @@ class SystemListDetailScreen extends ConsumerWidget {
                       const Icon(Icons.link, size: 20),
                       const SizedBox(width: 8),
                       Text(
-                        system.url ?? '',
+                        widget.system.url ?? '',
                         style: CustomTextTheme.theme.headlineMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
@@ -104,7 +119,7 @@ class SystemListDetailScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ref.read(systemDetailViewModelProvider.notifier).addMenu(context);
+          ref.read(systemDetailViewModelProvider.notifier).addSystemMenu(context, widget.system.systemNameEn ?? '');
         },
         child: const Icon(Icons.add),
       ),
@@ -112,6 +127,21 @@ class SystemListDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildMenuGridView(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(systemDetailViewModelProvider);
+
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.systemMenuList.isEmpty) {
+      return Center(
+        child: Text(
+          state.searchQuery.isEmpty ? '등록된 시스템이 없습니다.' : '검색 결과가 없습니다.',
+          style: CustomTextTheme.theme.bodyMedium,
+        ),
+      );
+    }
+
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -120,8 +150,10 @@ class SystemListDetailScreen extends ConsumerWidget {
         crossAxisSpacing: 16,
         childAspectRatio: 1.3,
       ),
-      itemCount: 10,
+      itemCount: state.systemMenuList.length,
       itemBuilder: (context, index) {
+        final systemMenu = state.systemMenuList[index];
+
         return Container(
           decoration: BoxDecoration(
             color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
@@ -148,13 +180,13 @@ class SystemListDetailScreen extends ConsumerWidget {
                   IconButton(
                     icon: const Icon(Icons.edit, size: 20),
                     onPressed: () {
-                      ref.read(systemDetailViewModelProvider.notifier).editMenu(context, '${index + 1}');
+                      ref.read(systemDetailViewModelProvider.notifier).editSystemMenu(context, systemMenu);
                     },
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, size: 20),
                     onPressed: () {
-                      ref.read(systemDetailViewModelProvider.notifier).deleteMenu(context, '${index + 1}');
+                      ref.read(systemDetailViewModelProvider.notifier).deleteSystemMenu(context, widget.system.id!);
                     },
                   ),
                 ],
@@ -167,11 +199,28 @@ class SystemListDetailScreen extends ConsumerWidget {
   }
 
   Widget _buildMenuListView(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(systemDetailViewModelProvider);
+
+    if (state.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.systemMenuList.isEmpty) {
+      return Center(
+        child: Text(
+          state.searchQuery.isEmpty ? '등록된 시스템이 없습니다.' : '검색 결과가 없습니다.',
+          style: CustomTextTheme.theme.bodyMedium,
+        ),
+      );
+    }
+
     return ListView.separated(
       padding: const EdgeInsets.all(16),
-      itemCount: 10,
+      itemCount: state.systemMenuList.length,
       separatorBuilder: (context, index) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
+        final systemMenu = state.systemMenuList[index];
+
         return Container(
           decoration: BoxDecoration(
             color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
@@ -180,12 +229,12 @@ class SystemListDetailScreen extends ConsumerWidget {
           ),
           child: ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            title: Text('메뉴 ${index + 1}', style: CustomTextTheme.theme.bodyLarge),
+            title: Text(systemMenu.menuName ?? '', style: CustomTextTheme.theme.bodyLarge),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 8),
-                Text('PATH: /${index + 1}', style: CustomTextTheme.theme.bodySmall),
+                Text(systemMenu.path ?? '', style: CustomTextTheme.theme.bodySmall),
               ],
             ),
             trailing: PopupMenuButton(
@@ -213,9 +262,9 @@ class SystemListDetailScreen extends ConsumerWidget {
               ],
               onSelected: (value) {
                 if (value == 'edit') {
-                  ref.read(systemDetailViewModelProvider.notifier).editMenu(context, '${index + 1}');
+                  ref.read(systemDetailViewModelProvider.notifier).editSystemMenu(context, systemMenu);
                 } else if (value == 'delete') {
-                  ref.read(systemDetailViewModelProvider.notifier).deleteMenu(context, '${index + 1}');
+                  ref.read(systemDetailViewModelProvider.notifier).deleteSystemMenu(context, widget.system.id!);
                 }
               },
             ),

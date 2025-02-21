@@ -31,7 +31,7 @@ class SystemRepository {
   Future<void> createSystem(SystemModel system) async {
     try {
       system = system.copyWith(createdAt: Timestamp.now().toDate());
-      await _firestore.collection('system').doc().set(system.toJson());
+      await _firestore.collection('system').doc(system.systemNameEn).set(system.toJson());
     } catch (e) {
       throw Exception("시스템 등록 실패: $e");
     }
@@ -57,32 +57,38 @@ class SystemRepository {
   }
 
   /// ************* 시스템 메뉴관련 **************
-  Stream<List<SystemMenuModel>> fetchSystemMenu() {
+  Stream<List<SystemMenuModel>> fetchSystemMenu(String systemCode) {
     try {
-      return _firestore
-          .collection('system_menu')
-          .orderBy('system_name_en')
-          .snapshots()
-          .map((snapshot) => snapshot.docs.map((doc) => SystemMenuModel.fromJson({'id': doc.id, ...doc.data()})).toList());
+      final query = _firestore
+          .collection('system_menu') // 컬렉션 이름 확인 필요
+          .where('system_code', isEqualTo: systemCode);
+
+      return query.snapshots().map((snapshot) {
+        final list = snapshot.docs.map((doc) => SystemMenuModel.fromJson(doc.data()).copyWith(id: doc.id)).toList();
+
+        list.sort((a, b) => (a.menuName ?? '').compareTo(b.menuName ?? ''));
+        return list;
+      });
     } catch (e) {
+      print('Error fetching system menu: $e'); // 에러 상세 출력
       throw Exception("시스템 메뉴 조회 실패: $e");
     }
   }
 
   // 시스템 메뉴 등록
-  Future<void> createSystemMenu(SystemMenuModel system) async {
+  Future<void> createSystemMenu(SystemMenuModel systemMenu) async {
     try {
-      String id = '${system.systemCode!}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}';
-      await _firestore.collection('system_menu').doc(id).set(system.toJson());
+      String id = '${systemMenu.systemCode!}_${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}';
+      await _firestore.collection('system_menu').doc(id).set(systemMenu.toJson());
     } catch (e) {
       throw Exception("시스템 메뉴 등록 실패: $e");
     }
   }
 
   // 시스템 메뉴 수정 - ID를 파라미터로 받음
-  Future<void> updateSystemMenu(String docId, SystemMenuModel menu) async {
+  Future<void> updateSystemMenu(SystemMenuModel systemMenu, String docId) async {
     try {
-      await _firestore.collection('system_menu').doc(docId).update(menu.toJson());
+      await _firestore.collection('system_menu').doc(docId).update(systemMenu.toJson());
     } catch (e) {
       throw Exception("시스템 메뉴 수정 실패: $e");
     }
