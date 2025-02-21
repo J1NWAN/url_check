@@ -149,9 +149,9 @@ class _SystemListTabState extends ConsumerState<SystemListTab> {
                 ],
                 onSelected: (value) {
                   if (value == 'edit') {
-                    ref.read(systemListViewModelProvider.notifier).editSystem(context, '${index + 1}');
+                    ref.read(systemListViewModelProvider.notifier).updateSystem(context, system);
                   } else if (value == 'delete') {
-                    ref.read(systemListViewModelProvider.notifier).deleteSystem(context, '${index + 1}');
+                    ref.read(systemListViewModelProvider.notifier).deleteSystem(context, system);
                   }
                 },
               ),
@@ -219,13 +219,13 @@ class _SystemListTabState extends ConsumerState<SystemListTab> {
                     IconButton(
                       icon: const Icon(Icons.edit, size: 20),
                       onPressed: () {
-                        ref.read(systemListViewModelProvider.notifier).editSystem(context, system.id);
+                        ref.read(systemListViewModelProvider.notifier).updateSystem(context, system);
                       },
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete, size: 20),
                       onPressed: () {
-                        ref.read(systemListViewModelProvider.notifier).deleteSystem(context, system.id);
+                        ref.read(systemListViewModelProvider.notifier).deleteSystem(context, system);
                       },
                     ),
                   ],

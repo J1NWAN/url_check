@@ -48,9 +48,10 @@ class SystemRepository {
   }
 
   // 시스템 삭제
-  Future<void> deleteSystem(String id) async {
+  Future<void> deleteSystem(SystemModel system) async {
     try {
-      await _firestore.collection('system').doc(id).delete();
+      print('system: ${system.toJson()}');
+      await _firestore.collection('system').doc(system.id).delete();
     } catch (e) {
       throw Exception("시스템 삭제 실패: $e");
     }

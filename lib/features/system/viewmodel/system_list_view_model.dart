@@ -98,7 +98,7 @@ class SystemListViewModel extends _$SystemListViewModel {
   void addSystem(BuildContext context) {
     final krNameController = TextEditingController();
     final enNameController = TextEditingController();
-
+    final urlController = TextEditingController();
     CustomDialog.show(
       context,
       title: '시스템 추가',
@@ -118,6 +118,12 @@ class SystemListViewModel extends _$SystemListViewModel {
           keyboardType: TextInputType.url,
           isRequired: true,
         ),
+        CustomTextField(
+          label: 'URL',
+          hintText: '예시: https://www.kins.re.kr',
+          controller: urlController,
+          keyboardType: TextInputType.url,
+        ),
       ],
       confirmText: '추가',
       cancelText: '취소',
@@ -125,9 +131,7 @@ class SystemListViewModel extends _$SystemListViewModel {
         // 입력된 값 사용
         final krName = krNameController.text;
         final enName = enNameController.text;
-
-        print(krName);
-        print(enName);
+        final url = urlController.text;
 
         // ...
         if (krName.isNotEmpty && enName.isNotEmpty) {
@@ -137,6 +141,7 @@ class SystemListViewModel extends _$SystemListViewModel {
             id: enName,
             systemNameKo: krName,
             systemNameEn: enName,
+            url: url,
           ));
 
           CustomSnackBar.show(
@@ -150,7 +155,7 @@ class SystemListViewModel extends _$SystemListViewModel {
     );
   }
 
-  void deleteSystem(BuildContext context, String id) {
+  void deleteSystem(BuildContext context, SystemModel system) {
     CustomDialog.show(
       context,
       title: '삭제',
@@ -161,7 +166,7 @@ class SystemListViewModel extends _$SystemListViewModel {
       onConfirm: () {
         // 데이터베이스에서 삭제
         final repository = ref.read(systemRepositoryProvider);
-        repository.deleteSystem(id);
+        repository.deleteSystem(system);
         CustomSnackBar.show(
           context,
           title: '완료',
@@ -172,10 +177,10 @@ class SystemListViewModel extends _$SystemListViewModel {
     );
   }
 
-  void editSystem(BuildContext context, String id) {
-    final krNameController = TextEditingController();
-    final enNameController = TextEditingController();
-    final urlController = TextEditingController();
+  void updateSystem(BuildContext context, SystemModel system) {
+    final krNameController = TextEditingController(text: system.systemNameKo);
+    final enNameController = TextEditingController(text: system.systemNameEn);
+    final urlController = TextEditingController(text: system.url);
 
     CustomDialog.show(
       context,
@@ -209,9 +214,10 @@ class SystemListViewModel extends _$SystemListViewModel {
         // 데이터베이스에서 수정
         final repository = ref.read(systemRepositoryProvider);
         repository.updateSystem(SystemModel(
-          id: id,
+          id: system.id,
           systemNameKo: krNameController.text,
           systemNameEn: enNameController.text,
+          url: urlController.text,
         ));
         CustomSnackBar.show(
           context,
