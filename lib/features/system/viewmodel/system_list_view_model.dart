@@ -138,7 +138,6 @@ class SystemListViewModel extends _$SystemListViewModel {
           // 데이터베이스에 저장
           final repository = ref.read(systemRepositoryProvider);
           repository.createSystem(SystemModel(
-            id: enName,
             systemNameKo: krName,
             systemNameEn: enName,
             url: url,
@@ -166,7 +165,7 @@ class SystemListViewModel extends _$SystemListViewModel {
       onConfirm: () {
         // 데이터베이스에서 삭제
         final repository = ref.read(systemRepositoryProvider);
-        repository.deleteSystem(system);
+        repository.deleteSystem(system.id!);
         CustomSnackBar.show(
           context,
           title: '완료',
@@ -213,12 +212,15 @@ class SystemListViewModel extends _$SystemListViewModel {
       onConfirm: () {
         // 데이터베이스에서 수정
         final repository = ref.read(systemRepositoryProvider);
-        repository.updateSystem(SystemModel(
-          id: system.id,
-          systemNameKo: krNameController.text,
-          systemNameEn: enNameController.text,
-          url: urlController.text,
-        ));
+        repository.updateSystem(
+            system.id!,
+            SystemModel(
+              systemNameKo: krNameController.text,
+              systemNameEn: enNameController.text,
+              url: urlController.text,
+              createdAt: system.createdAt,
+              updatedAt: DateTime.now(),
+            ));
         CustomSnackBar.show(
           context,
           title: '완료',

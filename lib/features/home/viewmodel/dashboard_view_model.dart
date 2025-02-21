@@ -39,7 +39,7 @@ class DashboardViewModel extends _$DashboardViewModel {
     systems.listen((snapshot) {
       final systems = snapshot.map((doc) {
         return DropdownConfig(
-          id: doc.id,
+          id: doc.id!,
           name: doc.systemNameKo ?? '',
           color: '0xFF808080',
         );

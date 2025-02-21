@@ -7,7 +7,7 @@ part 'system_model.g.dart';
 @freezed
 class SystemModel with _$SystemModel {
   const factory SystemModel({
-    required String id,
+    @JsonKey(ignore: true) String? id,
     @JsonKey(name: 'system_name_en') String? systemNameEn,
     @JsonKey(name: 'system_name_ko') String? systemNameKo,
     @JsonKey(name: 'url') String? url,
@@ -19,7 +19,6 @@ class SystemModel with _$SystemModel {
 
   // 빈 시스템 모델 생성을 위한 팩토리 메서드
   factory SystemModel.empty() => const SystemModel(
-        id: '',
         systemNameEn: null,
         systemNameKo: null,
         url: null,
