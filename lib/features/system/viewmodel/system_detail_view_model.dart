@@ -110,13 +110,13 @@ class SystemDetailViewModel extends _$SystemDetailViewModel {
       textFields: [
         CustomTextField(
           label: '메뉴명',
-          hintText: '예시: 메인페이지',
+          hintText: '예시: 메인화면',
           controller: menuNameController,
           isRequired: true,
         ),
         CustomTextField(
-          label: 'URL',
-          hintText: '예시: https://www.kins.re.kr/main',
+          label: 'PATH',
+          hintText: '예시: /index',
           controller: pathController,
           keyboardType: TextInputType.url,
           isRequired: true,
