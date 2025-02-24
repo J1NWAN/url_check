@@ -186,7 +186,7 @@ class _SystemListDetailScreenState extends ConsumerState<SystemListDetailScreen>
                   IconButton(
                     icon: const Icon(Icons.delete, size: 20),
                     onPressed: () {
-                      ref.read(systemDetailViewModelProvider.notifier).deleteSystemMenu(context, widget.system.id!);
+                      ref.read(systemDetailViewModelProvider.notifier).deleteSystemMenu(context, systemMenu.id!);
                     },
                   ),
                 ],
@@ -264,7 +264,7 @@ class _SystemListDetailScreenState extends ConsumerState<SystemListDetailScreen>
                 if (value == 'edit') {
                   ref.read(systemDetailViewModelProvider.notifier).editSystemMenu(context, systemMenu);
                 } else if (value == 'delete') {
-                  ref.read(systemDetailViewModelProvider.notifier).deleteSystemMenu(context, widget.system.id!);
+                  ref.read(systemDetailViewModelProvider.notifier).deleteSystemMenu(context, systemMenu.id!);
                 }
               },
             ),

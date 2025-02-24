@@ -171,7 +171,15 @@ class SystemDetailViewModel extends _$SystemDetailViewModel {
       confirmText: '수정',
       cancelText: '취소',
       onConfirm: () {
-        // 메뉴 수정 로직
+        final repository = ref.read(systemRepositoryProvider);
+        final model = SystemMenuModel(
+          menuName: menuNameController.text,
+          systemCode: systemMenu.systemCode,
+          path: pathController.text,
+          updatedAt: DateTime.now(),
+        );
+        repository.updateSystemMenu(model, systemMenu.id!);
+
         CustomSnackBar.show(
           context,
           title: '완료',
@@ -191,7 +199,10 @@ class SystemDetailViewModel extends _$SystemDetailViewModel {
       confirmText: '삭제',
       cancelText: '취소',
       onConfirm: () {
-        // 메뉴 삭제 로직
+        print('docId: $docId');
+        final repository = ref.read(systemRepositoryProvider);
+        repository.deleteSystemMenu(docId);
+
         CustomSnackBar.show(
           context,
           title: '완료',
