@@ -2,13 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
-import 'package:url_check/features/system/view/tab/view/monitoring_detail_screen.dart';
+import 'package:url_check/features/system/viewmodel/monitoring_view_model.dart';
 
-class MonitoringTab extends ConsumerWidget {
+class MonitoringTab extends ConsumerStatefulWidget {
   const MonitoringTab({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MonitoringTab> createState() => _MonitoringTabState();
+}
+
+class _MonitoringTabState extends ConsumerState<MonitoringTab> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(monitoringViewModelProvider.notifier).initState();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(monitoringViewModelProvider);
+
     return Column(
       children: [
         // 상단 요약 정보
