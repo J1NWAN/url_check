@@ -19,7 +19,7 @@ class SystemRepository {
   // 시스템 목록 조회 - ID를 별도로 추가
   Stream<List<SystemModel>> fetchSystems() {
     try {
-      return _firestore.collection('system').orderBy('system_name_en').snapshots().map((snapshot) => snapshot.docs
+      return _firestore.collection('system').orderBy('system_name_ko').snapshots().map((snapshot) => snapshot.docs
           .map((doc) => SystemModel.fromJson(doc.data()).copyWith(id: doc.id)) // ID를 별도로 추가
           .toList());
     } catch (e) {
