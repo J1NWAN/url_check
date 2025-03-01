@@ -53,11 +53,11 @@ class DashboardScreen extends ConsumerWidget {
                   Expanded(
                     child: CustomDatePicker(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                      initialDate: DateTime.now(),
+                      initialDate: dashboardState.selectedDate,
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2100),
                       onDateSelected: (date) {
-                        print('선택된 날짜: $date');
+                        ref.read(dashboardViewModelProvider.notifier).updateSelectedDate(date);
                       },
                     ),
                   ),
@@ -89,42 +89,63 @@ class DashboardScreen extends ConsumerWidget {
                     ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: 2, // 최근 5개 결과만 표시
+                      itemCount: dashboardState.dashboardResultList.length,
                       separatorBuilder: (context, index) => const Divider(),
-
                       itemBuilder: (context, index) {
+                        final result = dashboardState.dashboardResultList[index];
+                        final isOk = result['status'] == 'OK';
+                        final completedTime = result['completedTime'] as DateTime;
+                        final now = DateTime.now();
+                        final difference = now.difference(completedTime);
+
+                        // 경과 시간 표시 형식 결정
+                        String timeAgo;
+                        if (difference.inMinutes < 1) {
+                          timeAgo = '방금 전';
+                        } else if (difference.inHours < 1) {
+                          timeAgo = '${difference.inMinutes}분 전';
+                        } else if (difference.inDays < 1) {
+                          timeAgo = '${difference.inHours}시간 전';
+                        } else {
+                          timeAgo = '${difference.inDays}일 전';
+                        }
+
                         return GestureDetector(
                           onTap: () {
                             print('tapped');
                           },
-                          child: ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: Icon(
-                              index % 2 == 0 ? Icons.sentiment_very_satisfied_rounded : Icons.sentiment_very_dissatisfied_rounded,
-                              color: index % 2 == 0 ? Colors.green : Colors.red,
-                            ),
-                            title: Text('기관홈페이지 외 10개 시스템', style: CustomTextTheme.theme.bodyMedium),
-                            subtitle: Text('평균 응답시간: 245ms', style: CustomTextTheme.theme.bodySmall),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '1분 전',
-                                  style: CustomTextTheme.theme.bodySmall,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  index % 2 == 0 ? '정상' : '오류',
-                                  style: TextStyle(
-                                    color: index % 2 == 0 ? Colors.green : Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                          child: dashboardState.dashboardResultList.isNotEmpty
+                              ? ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  leading: Icon(
+                                    isOk ? Icons.sentiment_very_satisfied_rounded : Icons.sentiment_very_dissatisfied_rounded,
+                                    color: isOk ? Colors.green : Colors.red,
                                   ),
+                                  title: Text(result['title'], style: CustomTextTheme.theme.bodyMedium),
+                                  subtitle: Text('평균 응답시간: ${result['avgResponseTime']}ms', style: CustomTextTheme.theme.bodySmall),
+                                  trailing: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        timeAgo,
+                                        style: CustomTextTheme.theme.bodySmall,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        isOk ? '정상' : '오류',
+                                        style: TextStyle(
+                                          color: isOk ? Colors.green : Colors.red,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : Center(
+                                  child: Text('점검 이력이 없습니다.', style: CustomTextTheme.theme.bodySmall),
                                 ),
-                              ],
-                            ),
-                          ),
                         );
                       },
                     ),

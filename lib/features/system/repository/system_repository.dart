@@ -66,7 +66,8 @@ class SystemRepository {
       return query.snapshots().map((snapshot) {
         final list = snapshot.docs.map((doc) => SystemMenuModel.fromJson(doc.data()).copyWith(id: doc.id)).toList();
 
-        list.sort((a, b) => (a.menuName ?? '').compareTo(b.menuName ?? ''));
+        list.sort((a, b) => (a.createdAt ?? DateTime.now()).compareTo(b.createdAt ?? DateTime.now()));
+
         return list;
       });
     } catch (e) {
