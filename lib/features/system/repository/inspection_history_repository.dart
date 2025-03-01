@@ -40,7 +40,6 @@ class InspectionHistoryRepository {
 
       return _firestore
           .collection('url_check_history')
-          .where('system_code', isEqualTo: model.systemCode)
           .where('path', isEqualTo: model.path)
           .where('created_at', isGreaterThanOrEqualTo: Timestamp.fromDate(startTime))
           .where('created_at', isLessThanOrEqualTo: Timestamp.fromDate(endTime))

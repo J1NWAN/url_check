@@ -27,6 +27,16 @@ class SystemRepository {
     }
   }
 
+  // 시스템 개수 조회
+  Future<int> fetchSystemCount() async {
+    try {
+      final snapshot = await _firestore.collection('system').count().get();
+      return snapshot.count ?? 0;
+    } catch (e) {
+      throw Exception("시스템 개수 조회 실패: $e");
+    }
+  }
+
   // 시스템 등록
   Future<void> createSystem(SystemModel system) async {
     try {
@@ -59,9 +69,14 @@ class SystemRepository {
   /// ************* 시스템 메뉴관련 **************
   Stream<List<SystemMenuModel>> fetchSystemMenu(String systemCode) {
     try {
-      final query = _firestore
-          .collection('system_menu') // 컬렉션 이름 확인 필요
-          .where('system_code', isEqualTo: systemCode);
+      Query<Map<String, dynamic>> query;
+      if (systemCode == 'all') {
+        query = _firestore.collection('system_menu').orderBy('created_at', descending: true);
+      } else {
+        query = _firestore
+            .collection('system_menu') // 컬렉션 이름 확인 필요
+            .where('system_code', isEqualTo: systemCode);
+      }
 
       return query.snapshots().map((snapshot) {
         final list = snapshot.docs.map((doc) => SystemMenuModel.fromJson(doc.data()).copyWith(id: doc.id)).toList();
