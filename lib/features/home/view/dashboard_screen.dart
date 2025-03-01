@@ -100,7 +100,7 @@ class DashboardScreen extends ConsumerWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        '${result['completedTime']} 분전',
+                                        '${result['completedTime']}분 전',
                                         style: CustomTextTheme.theme.bodySmall,
                                       ),
                                       const SizedBox(height: 4),
@@ -150,7 +150,11 @@ class DashboardScreen extends ConsumerWidget {
                 border: Border.all(color: Colors.grey.withOpacity(0.2)),
                 color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
               ),
-              child: const BarChartSample6(),
+              child: ref.watch(dashboardViewModelProvider).dashboardStatusList.isNotEmpty
+                  ? BarChartSample6(dashboardStatusList: ref.watch(dashboardViewModelProvider).dashboardStatusList)
+                  : const Center(
+                      child: Text('데이터가 없습니다.'),
+                    ),
             ),
           ],
         ),

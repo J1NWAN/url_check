@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:url_check/features/home/widget/legend_widget.dart';
 
 class AppColors {
@@ -28,7 +27,8 @@ class AppColors {
 }
 
 class BarChartSample6 extends StatelessWidget {
-  const BarChartSample6({super.key});
+  final List<Map<String, dynamic>> dashboardStatusList;
+  const BarChartSample6({super.key, required this.dashboardStatusList});
 
   final steadyColor = AppColors.contentColorGreen;
   final errorColor = AppColors.contentColorRed;
@@ -61,43 +61,53 @@ class BarChartSample6 extends StatelessWidget {
   }
 
   Widget bottomTitles(double value, TitleMeta meta) {
-    const style = TextStyle(fontSize: 10);
-    String text;
-    switch (value.toInt()) {
-      case 0:
-        text = 'WWW';
-        break;
-      case 1:
-        text = 'NSIC';
-        break;
-      case 2:
-        text = 'OPIS';
-        break;
-      case 3:
-        text = 'NSIC';
-        break;
-      case 4:
-        text = 'CLEAN';
-        break;
-      case 5:
-        text = 'KINSRP';
-        break;
-      case 6:
-        text = 'INSS';
-        break;
-      case 7:
-        text = 'RMSNET';
-        break;
-      case 8:
-        text = 'SEP';
-        break;
+    const style = TextStyle(fontSize: 8);
+    String text = '';
 
-      default:
-        text = '';
+    for (var status in dashboardStatusList) {
+      if (status['index'] == value.toInt()) {
+        text = status['systemCode'];
+      }
     }
+
+    // switch (value.toInt()) {
+    //   case 0:
+    //     text = 'WWW';
+    //     break;
+    //   case 1:
+    //     text = 'NSIC';
+    //     break;
+    //   case 2:
+    //     text = 'OPIS';
+    //     break;
+    //   case 3:
+    //     text = 'NSIC';
+    //     break;
+    //   case 4:
+    //     text = 'CLEAN';
+    //     break;
+    //   case 5:
+    //     text = 'KINSRP';
+    //     break;
+    //   case 6:
+    //     text = 'INSS';
+    //     break;
+    //   case 7:
+    //     text = 'RMSNET';
+    //     break;
+    //   case 8:
+    //     text = 'SEP';
+    //     break;
+
+    //   default:
+    //     text = '';
+    // }
     return SideTitleWidget(
       axisSide: meta.axisSide,
-      child: Text(text, style: style),
+      child: Text(
+        text.length > 5 ? text.substring(0, 5) : text,
+        style: style,
+      ),
     );
   }
 
@@ -151,15 +161,9 @@ class BarChartSample6 extends StatelessWidget {
                     borderData: FlBorderData(show: false),
                     gridData: const FlGridData(show: false),
                     barGroups: [
-                      generateGroupData(0, 2, 3, 2),
-                      generateGroupData(1, 2, 5, 1.7),
-                      generateGroupData(2, 1.3, 3.1, 2.8),
-                      generateGroupData(3, 3.1, 4, 3.1),
-                      generateGroupData(4, 0.8, 3.3, 3.4),
-                      generateGroupData(5, 2, 5.6, 1.8),
-                      generateGroupData(6, 1.3, 3.2, 2),
-                      generateGroupData(7, 2.3, 3.2, 3),
-                      generateGroupData(8, 2, 4.8, 2.5),
+                      for (var status in dashboardStatusList)
+                        generateGroupData(
+                            status['index'], (status['successCount'] as int).toDouble(), (status['errorCount'] as int).toDouble(), 0),
                     ],
                     maxY: 11 + (betweenSpace * 3),
                     extraLinesData: ExtraLinesData(

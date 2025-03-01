@@ -6,24 +6,25 @@ import 'package:url_check/features/system/repository/system_repository.dart';
 part 'dashboard_view_model.g.dart';
 
 class DashboardState {
-  final List<Map<String, dynamic>> inspectionResultList;
-  final List<Map<String, dynamic>> dashboardResultList;
+  final List<Map<String, dynamic>> dashboardResultList; // 최근 점검 결과에 사용
+  final List<Map<String, dynamic>> dashboardStatusList; // 최근 시스템 현황에 사용
+
   final DateTime selectedDate;
 
   DashboardState({
-    this.inspectionResultList = const [],
     this.dashboardResultList = const [],
+    this.dashboardStatusList = const [],
     DateTime? selectedDate,
   }) : selectedDate = selectedDate ?? DateTime.now();
 
   DashboardState copyWith({
-    List<Map<String, dynamic>>? inspectionResultList,
     List<Map<String, dynamic>>? dashboardResultList,
+    List<Map<String, dynamic>>? dashboardStatusList,
     DateTime? selectedDate,
   }) {
     return DashboardState(
-      inspectionResultList: inspectionResultList ?? this.inspectionResultList,
       dashboardResultList: dashboardResultList ?? this.dashboardResultList,
+      dashboardStatusList: dashboardStatusList ?? this.dashboardStatusList,
       selectedDate: selectedDate ?? this.selectedDate,
     );
   }
@@ -39,19 +40,17 @@ class DashboardViewModel extends _$DashboardViewModel {
 
   /// ************* 초기 데이터 설정 **************
   Future<void> initBuild() async {
-    final systemRepository = ref.read(systemRepositoryProvider);
-    final inspectionHistoryRepository = ref.read(inspectionHistoryRepositoryProvider);
-
     // 대시보드 결과 리스트 설정
     setDashboardResultList();
+
+    // 대시보드 시스템 현황 리스트 설정
+    setDashboardStatusList();
   }
 
-  /// ************* 대시보드 결과 리스트 설정 **************
+  /// ************* 대시보드 최근 점검 결과 리스트 설정 **************
   void setDashboardResultList() {
     final systemRepository = ref.read(systemRepositoryProvider);
     final inspectionHistoryRepository = ref.read(inspectionHistoryRepositoryProvider);
-
-    final systemCount = systemRepository.fetchSystemCount();
 
     // 시스템 메뉴 조회
     final systemMenuList = systemRepository.fetchSystemMenu('all');
@@ -106,9 +105,6 @@ class DashboardViewModel extends _$DashboardViewModel {
 
           // 모든 메뉴의 처리가 완료되었을 때 최종 결과 출력
           if (completedMenus == totalMenus) {
-            print('최종 firstInspectionHistoryList: $firstInspectionHistoryList\n');
-            print('최종 secondInspectionHistoryList: $secondInspectionHistoryList\n');
-
             List<Map<String, dynamic>> resultList = [];
 
             int firstTotalResponseTime = 0;
@@ -184,6 +180,91 @@ class DashboardViewModel extends _$DashboardViewModel {
 
               state = state.copyWith(dashboardResultList: resultList);
             });
+          }
+        });
+      }
+    });
+  }
+
+  /// ************* 대시보드 최근 시스템 현황 리스트 설정 **************
+  void setDashboardStatusList() {
+    final systemRepository = ref.read(systemRepositoryProvider);
+    final inspectionHistoryRepository = ref.read(inspectionHistoryRepositoryProvider);
+
+    // 시스템 메뉴 조회
+    final systemMenuList = systemRepository.fetchSystemMenu('all');
+
+    // 시스템별 성공/실패 카운트를 저장할 Map
+    Map<String, Map<String, int>> systemStatusCounts = {};
+
+    systemMenuList.listen((snapshot) {
+      final totalMenus = snapshot.length;
+      int completedMenus = 0;
+
+      for (var menu in snapshot) {
+        InspectionHistoryModel model = InspectionHistoryModel(
+          systemCode: menu.systemCode,
+          path: menu.path,
+        );
+
+        final searchTime = DateTime.now();
+        final inspectionResultList = inspectionHistoryRepository.fetchLatestInspectionHistoryList(model, searchTime);
+
+        inspectionResultList.listen((snapshot) {
+          for (var inspectionHistory in snapshot) {
+            final systemCode = inspectionHistory.systemCode;
+
+            // 시스템별 카운트 초기화
+            if (!systemStatusCounts.containsKey(systemCode)) {
+              systemStatusCounts['$systemCode'] = {'successCount': 0, 'errorCount': 0};
+            }
+
+            // 상태에 따라 카운트 증가
+            if (inspectionHistory.actualStatus == 'OK') {
+              systemStatusCounts[systemCode]!['successCount'] = (systemStatusCounts[systemCode]!['successCount'] ?? 0) + 1;
+            } else {
+              systemStatusCounts[systemCode]!['errorCount'] = (systemStatusCounts[systemCode]!['errorCount'] ?? 0) + 1;
+            }
+          }
+
+          completedMenus++;
+
+          // 모든 메뉴 처리가 완료되면 결과 저장
+          if (completedMenus == totalMenus) {
+            // systemCode 길이에 따라 정렬된 리스트 생성
+            List<String> sortedSystemCodes = systemStatusCounts.keys.toList();
+            sortedSystemCodes.sort((a, b) => a.length.compareTo(b.length));
+
+            // 짧은 코드와 긴 코드를 번갈아가며 새로운 리스트 생성
+            List<String> alternatingSystemCodes = [];
+            int shortIndex = 0;
+            int longIndex = sortedSystemCodes.length - 1;
+
+            while (shortIndex <= longIndex) {
+              if (shortIndex == longIndex) {
+                alternatingSystemCodes.add(sortedSystemCodes[shortIndex]);
+                break;
+              }
+              alternatingSystemCodes.add(sortedSystemCodes[shortIndex]);
+              alternatingSystemCodes.add(sortedSystemCodes[longIndex]);
+              shortIndex++;
+              longIndex--;
+            }
+
+            // 최종 결과 리스트 생성
+            List<Map<String, dynamic>> statusList = [];
+            for (int i = 0; i < alternatingSystemCodes.length; i++) {
+              String systemCode = alternatingSystemCodes[i];
+              statusList.add({
+                'index': i,
+                'systemCode': systemCode,
+                'successCount': systemStatusCounts[systemCode]!['successCount'],
+                'errorCount': systemStatusCounts[systemCode]!['errorCount'],
+              });
+            }
+
+            state = state.copyWith(dashboardStatusList: statusList);
+            print('statusList: $statusList');
           }
         });
       }
