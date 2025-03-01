@@ -71,7 +71,7 @@ class SystemRepository {
     try {
       Query<Map<String, dynamic>> query;
       if (systemCode == 'all') {
-        query = _firestore.collection('system_menu').orderBy('created_at', descending: true);
+        query = _firestore.collection('system_menu').orderBy('system_code', descending: false).orderBy('created_at', descending: false);
       } else {
         query = _firestore
             .collection('system_menu') // 컬렉션 이름 확인 필요
