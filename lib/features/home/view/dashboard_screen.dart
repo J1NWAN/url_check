@@ -38,26 +38,13 @@ class DashboardScreen extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: CustomDropDownButton(
-                      label: '시스템',
-                      categories: dashboardState.systems,
-                      value: dashboardState.selectedSystemId ?? '',
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                          ref.read(dashboardViewModelProvider.notifier).updateSelectedSystem(value);
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
                     child: CustomDatePicker(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
                       initialDate: dashboardState.selectedDate,
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2100),
                       onDateSelected: (date) {
-                        ref.read(dashboardViewModelProvider.notifier).updateSelectedDate(date);
+                        // ref.read(dashboardViewModelProvider.notifier).updateSelectedDate(date);
                       },
                     ),
                   ),
@@ -94,21 +81,6 @@ class DashboardScreen extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final result = dashboardState.dashboardResultList[index];
                         final isOk = result['status'] == 'OK';
-                        final completedTime = result['completedTime'] as DateTime;
-                        final now = DateTime.now();
-                        final difference = now.difference(completedTime);
-
-                        // 경과 시간 표시 형식 결정
-                        String timeAgo;
-                        if (difference.inMinutes < 1) {
-                          timeAgo = '방금 전';
-                        } else if (difference.inHours < 1) {
-                          timeAgo = '${difference.inMinutes}분 전';
-                        } else if (difference.inDays < 1) {
-                          timeAgo = '${difference.inHours}시간 전';
-                        } else {
-                          timeAgo = '${difference.inDays}일 전';
-                        }
 
                         return GestureDetector(
                           onTap: () {
@@ -128,7 +100,7 @@ class DashboardScreen extends ConsumerWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        timeAgo,
+                                        '${result['completedTime']} 분전',
                                         style: CustomTextTheme.theme.bodySmall,
                                       ),
                                       const SizedBox(height: 4),
@@ -149,15 +121,20 @@ class DashboardScreen extends ConsumerWidget {
                         );
                       },
                     ),
-                    Padding(
-                      padding: EdgeInsets.zero,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text('전체 결과 보기', style: CustomTextTheme.theme.bodySmall),
-                          const SizedBox(width: 4),
-                          const Icon(Icons.arrow_forward_ios, size: 12),
-                        ],
+                    InkWell(
+                      onTap: () {
+                        print('전체 결과 보기 탭');
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.zero,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text('전체 결과 보기', style: CustomTextTheme.theme.bodySmall),
+                            const SizedBox(width: 4),
+                            const Icon(Icons.arrow_forward_ios, size: 12),
+                          ],
+                        ),
                       ),
                     ),
                   ],
