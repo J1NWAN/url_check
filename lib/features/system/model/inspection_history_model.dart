@@ -12,8 +12,9 @@ class InspectionHistoryModel with _$InspectionHistoryModel {
     @JsonKey(name: 'system_code') String? systemCode,
     @JsonKey(name: 'path') String? path,
     @JsonKey(name: 'url') String? url,
-    @JsonKey(name: 'status_code') String? status_code,
-    @JsonKey(name: 'actual_status') String? actual_status,
+    @JsonKey(name: 'status_code') int? statusCode,
+    @JsonKey(name: 'actual_status') String? actualStatus,
+    @JsonKey(name: 'response_time') int? responseTime,
     @JsonKey(name: 'created_at', fromJson: _timestampFromJson, toJson: _timestampToJson) DateTime? createdAt,
   }) = _InspectionHistoryModel;
 
@@ -25,8 +26,9 @@ class InspectionHistoryModel with _$InspectionHistoryModel {
         systemCode: null,
         path: null,
         url: null,
-        status_code: null,
-        actual_status: null,
+        statusCode: null,
+        actualStatus: null,
+        responseTime: null,
         createdAt: null,
       );
 }
