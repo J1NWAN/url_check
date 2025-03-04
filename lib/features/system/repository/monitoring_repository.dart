@@ -29,49 +29,48 @@ class MonitoringRepository {
     }
   }
 
-  /// 시스템별 최신 점검 이력 조회 (시스템 URL + 메뉴 PATH)
-  Future<List<String>> fetchLatestCheckHistory(List<SystemModel> systems) async {
+  /// ************* 최신 모니터링 목록 조회 **************
+  Future<List<Map<String, dynamic>>> fetchLatestMonitoringList(List<SystemModel> systems) async {
     try {
-      List<String> errorList = [];
+      List<Map<String, dynamic>> monitoringList = [];
 
       for (final system in systems) {
         /// 시스템 메뉴 조회
         final systemMenuSnapshot = await _firestore
             .collection('system_menu')
             .where('system_code', isEqualTo: system.systemNameEn)
-            .orderBy('created_at', descending: true)
+            .orderBy('created_at', descending: false)
             .get();
 
         for (final systemMenu in systemMenuSnapshot.docs) {
           final systemMenuData = SystemMenuModel.fromJson(systemMenu.data());
 
-          final url = '${system.url}${systemMenuData.path}';
-          try {
-            /// 최신 점검 이력 조회
-            final checkHistorySnapshot = await _firestore
-                .collection('url_check_history')
-                .where('system_code', isEqualTo: systemMenuData.systemCode)
-                .where('url', isEqualTo: url)
-                .orderBy('created_at', descending: true)
-                .limit(1)
-                .get();
+          /// 최신 점검 이력 조회
+          final checkHistorySnapshot = await _firestore
+              .collection('url_check_history')
+              .where('system_code', isEqualTo: system.systemNameEn)
+              .where('path', isEqualTo: systemMenuData.path)
+              .orderBy('created_at', descending: true)
+              .limit(1)
+              .get();
 
-            if (checkHistorySnapshot.docs.isNotEmpty) {
-              final checkHistoryData = checkHistorySnapshot.docs.first.data();
-
-              /// 오류 검증
-              if (checkHistoryData['actual_status'] != 'OK') {
-                errorList.add(checkHistoryData['system_code']);
-                break;
-              }
-            }
-          } catch (e) {
-            print('Error in fetchLatestCheckHistory2: $e');
+          if (checkHistorySnapshot.docs.isNotEmpty) {
+            final checkHistoryData = checkHistorySnapshot.docs.first.data();
+            monitoringList.add({
+              'systemNameEn': system.systemNameEn,
+              'systemNameKo': system.systemNameKo,
+              'systemCode': systemMenuData.systemCode,
+              'systemUrl': system.url,
+              'path': systemMenuData.path,
+              'actualStatus': checkHistoryData['actual_status'],
+              'responseTime': checkHistoryData['response_time'],
+              'createdAt': checkHistoryData['created_at'],
+            });
           }
         }
       }
 
-      return errorList;
+      return monitoringList;
     } catch (e) {
       print('Error in fetchLatestCheckHistory: $e');
       throw Exception("최신 점검 이력 조회 실패: $e");
