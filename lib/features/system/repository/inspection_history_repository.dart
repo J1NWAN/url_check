@@ -15,16 +15,30 @@ class InspectionHistoryRepository {
   InspectionHistoryRepository(this._firestore);
 
   /// ************* 점검 이력 조회 **************
-  Stream<List<InspectionHistoryModel>> fetchInspectionHistoryList() {
+  Stream<List<InspectionHistoryModel>> fetchInspectionHistoryList({DateTime? startDate, DateTime? endDate}) {
     try {
-      return _firestore.collection('url_check_history').orderBy('created_at', descending: true).snapshots().map((snapshot) {
+      var query = _firestore.collection('url_check_history').orderBy('created_at', descending: true);
+
+      // 시작일이 있는 경우
+      if (startDate != null) {
+        final start = DateTime(startDate.year, startDate.month, startDate.day);
+        query = query.where('created_at', isGreaterThanOrEqualTo: Timestamp.fromDate(start));
+      }
+
+      // 종료일이 있는 경우
+      if (endDate != null) {
+        final end = DateTime(endDate.year, endDate.month, endDate.day, 23, 59, 59);
+        query = query.where('created_at', isLessThanOrEqualTo: Timestamp.fromDate(end));
+      }
+
+      return query.snapshots().map((snapshot) {
         return snapshot.docs.map((doc) {
           return InspectionHistoryModel.fromJson(doc.data()).copyWith(id: doc.id);
         }).toList();
       });
     } catch (e) {
-      print('Error in fetchMonitoringList: $e'); // 에러 출력
-      throw Exception("시스템 목록 조회 실패: $e");
+      print('Error in fetchInspectionHistoryList: $e');
+      throw Exception("점검 이력 조회 실패: $e");
     }
   }
 

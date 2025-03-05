@@ -20,7 +20,7 @@ class InspectionHistoryModel with _$InspectionHistoryModel {
 
   factory InspectionHistoryModel.fromJson(Map<String, dynamic> json) => _$InspectionHistoryModelFromJson(json);
 
-  // 빈 시스템 모델 생성을 위한 팩토리 메서드
+// 빈 시스템 모델 생성을 위한 팩토리 메서드
   factory InspectionHistoryModel.empty() => const InspectionHistoryModel(
         menuName: null,
         systemCode: null,

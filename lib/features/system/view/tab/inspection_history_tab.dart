@@ -90,60 +90,65 @@ class InspectionHistoryTab extends ConsumerWidget {
         ),
         // 점검 이력 목록
         Expanded(
-          child: ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: 10, // 임시 데이터
-            separatorBuilder: (context, index) => const SizedBox(height: 16),
-            itemBuilder: (context, index) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
+          child: state.inspectionHistoryList.isEmpty
+              ? const Center(child: Text('점검 이력이 없습니다.'))
+              : ListView.separated(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.inspectionHistoryList.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final history = state.inspectionHistoryList[index];
+                    final isOk = history.actualStatus == 'OK';
+
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        title: Text(
+                          history.menuName ?? '',
+                          style: CustomTextTheme.theme.bodyLarge,
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            Text(
+                              'URL: ${history.url ?? ""}',
+                              style: CustomTextTheme.theme.bodySmall,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '점검 시간: ${history.createdAt?.toString().substring(0, 16) ?? ""}',
+                              style: CustomTextTheme.theme.bodySmall,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '응답 시간: ${history.responseTime}ms',
+                              style: CustomTextTheme.theme.bodySmall,
+                            ),
+                          ],
+                        ),
+                        trailing: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: (isOk ? Colors.green : Colors.red).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            isOk ? '정상' : '오류',
+                            style: CustomTextTheme.theme.bodySmall?.copyWith(
+                              color: isOk ? Colors.green : Colors.red,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  title: Text(
-                    '기관홈페이지 (WWW)',
-                    style: CustomTextTheme.theme.bodyLarge,
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
-                      Text(
-                        'URL: https://www.kins.re.kr',
-                        style: CustomTextTheme.theme.bodySmall,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '점검 시간: 2024-03-21 14:30:00',
-                        style: CustomTextTheme.theme.bodySmall,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '응답 시간: 1.2초',
-                        style: CustomTextTheme.theme.bodySmall,
-                      ),
-                    ],
-                  ),
-                  trailing: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '정상',
-                      style: CustomTextTheme.theme.bodySmall?.copyWith(
-                        color: Colors.green,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
         ),
       ],
     );
