@@ -31,6 +31,10 @@ class MonitoringState {
 
 @riverpod
 class MonitoringViewModel extends _$MonitoringViewModel {
+  // 캐시 만료 시간 설정
+  static const cacheDuration = Duration(minutes: 5);
+  DateTime? _lastFetchTime;
+
   @override
   MonitoringState build() {
     return MonitoringState(
@@ -41,71 +45,86 @@ class MonitoringViewModel extends _$MonitoringViewModel {
   }
 
   void initState() {
-    _initMonitoringList();
+    // 캐시가 유효한지 확인
+    if (_lastFetchTime == null || DateTime.now().difference(_lastFetchTime!) > cacheDuration) {
+      _initMonitoringList();
+    }
   }
 
   Future<void> _initMonitoringList() async {
-    print('initMonitoringList');
     state = state.copyWith(isLoading: true);
-
-    // 시스템별 성공/실패 카운트를 저장할 Map
-    Map<String, Map<String, dynamic>> monitoringStatus = {};
 
     try {
       final repository = ref.read(monitoringRepositoryProvider);
       repository.fetchMonitoringList().listen(
         (systems) async {
+          final monitoringList = await repository.fetchLatestMonitoringList(systems);
+
+          // 데이터 처리 및 상태 업데이트
+          final processedData = _processMonitoringData(monitoringList);
           state = state.copyWith(
             systemList: systems,
+            systemStatuses: processedData,
             isLoading: false,
           );
 
-          repository.fetchLatestMonitoringList(systems).then((monitoringList) {
-            for (final monitoring in monitoringList) {
-              // 시스템별 카운트 초기화
-              if (!monitoringStatus.containsKey(monitoring['systemCode'])) {
-                monitoringStatus['${monitoring['systemCode']}'] = {
-                  'successCount': 0,
-                  'errorCount': 0,
-                  'responseTime': 0,
-                };
-              } else if (monitoringStatus.containsKey(monitoring['systemCode'])) {}
-              // 시스템 정보 저장
-              monitoringStatus['${monitoring['systemCode']}']!['systemNameKo'] = monitoring['systemNameKo'];
-              monitoringStatus['${monitoring['systemCode']}']!['systemNameEn'] = monitoring['systemNameEn'];
-              monitoringStatus['${monitoring['systemCode']}']!['systemUrl'] = monitoring['systemUrl'];
-              monitoringStatus['${monitoring['systemCode']}']!['systemCode'] = monitoring['systemCode'];
-              monitoringStatus['${monitoring['systemCode']}']!['actualStatus'] = monitoring['actualStatus'];
-              monitoringStatus['${monitoring['systemCode']}']!['responseTime'] =
-                  (monitoringStatus['${monitoring['systemCode']}']!['responseTime'] ?? 0) + monitoring['responseTime'];
-
-              // 기존 응답시간에 새로운 응답시간을 더하고 평균 계산
-              monitoringStatus['${monitoring['systemCode']}']!['createdAt'] =
-                  (monitoring['createdAt'] as Timestamp).toDate().toString().substring(0, 16);
-
-              // 상태에 따라 카운트 증가
-              if (monitoring['actualStatus'] == 'OK') {
-                monitoringStatus['${monitoring['systemCode']}']!['successCount'] =
-                    (monitoringStatus['${monitoring['systemCode']}']!['successCount'] ?? 0) + 1;
-              } else {
-                monitoringStatus['${monitoring['systemCode']}']!['errorCount'] =
-                    (monitoringStatus['${monitoring['systemCode']}']!['errorCount'] ?? 0) + 1;
-              }
-            }
-
-            monitoringStatus.forEach((key, value) {
-              if (value['responseTime'] != 0) {
-                value['responseTime'] = (value['responseTime'] / (value['successCount'] + value['errorCount'])).round();
-              }
-            });
-            print(monitoringStatus);
-            state = state.copyWith(systemStatuses: monitoringStatus);
-          });
+          // 캐시 시간 업데이트
+          _lastFetchTime = DateTime.now();
         },
       );
     } catch (e) {
       print('Error fetching systems: $e');
       state = state.copyWith(isLoading: false);
     }
+  }
+
+  // 수동 새로고침을 위한 메서드
+  Future<void> refresh() async {
+    _lastFetchTime = null;
+    await _initMonitoringList();
+  }
+
+  Map<String, Map<String, dynamic>> _processMonitoringData(List<Map<String, dynamic>> monitoringList) {
+    Map<String, Map<String, dynamic>> monitoringStatus = {};
+
+    for (final monitoring in monitoringList) {
+      // 시스템별 카운트 초기화
+      if (!monitoringStatus.containsKey(monitoring['systemCode'])) {
+        monitoringStatus['${monitoring['systemCode']}'] = {
+          'successCount': 0,
+          'errorCount': 0,
+          'responseTime': 0,
+        };
+      } else if (monitoringStatus.containsKey(monitoring['systemCode'])) {}
+      // 시스템 정보 저장
+      monitoringStatus['${monitoring['systemCode']}']!['systemNameKo'] = monitoring['systemNameKo'];
+      monitoringStatus['${monitoring['systemCode']}']!['systemNameEn'] = monitoring['systemNameEn'];
+      monitoringStatus['${monitoring['systemCode']}']!['systemUrl'] = monitoring['systemUrl'];
+      monitoringStatus['${monitoring['systemCode']}']!['systemCode'] = monitoring['systemCode'];
+      monitoringStatus['${monitoring['systemCode']}']!['actualStatus'] = monitoring['actualStatus'];
+      monitoringStatus['${monitoring['systemCode']}']!['responseTime'] =
+          (monitoringStatus['${monitoring['systemCode']}']!['responseTime'] ?? 0) + monitoring['responseTime'];
+
+      // 기존 응답시간에 새로운 응답시간을 더하고 평균 계산
+      monitoringStatus['${monitoring['systemCode']}']!['createdAt'] =
+          (monitoring['createdAt'] as Timestamp).toDate().toString().substring(0, 16);
+
+      // 상태에 따라 카운트 증가
+      if (monitoring['actualStatus'] == 'OK') {
+        monitoringStatus['${monitoring['systemCode']}']!['successCount'] =
+            (monitoringStatus['${monitoring['systemCode']}']!['successCount'] ?? 0) + 1;
+      } else {
+        monitoringStatus['${monitoring['systemCode']}']!['errorCount'] =
+            (monitoringStatus['${monitoring['systemCode']}']!['errorCount'] ?? 0) + 1;
+      }
+    }
+
+    monitoringStatus.forEach((key, value) {
+      if (value['responseTime'] != 0) {
+        value['responseTime'] = (value['responseTime'] / (value['successCount'] + value['errorCount'])).round();
+      }
+    });
+    print(monitoringStatus);
+    return monitoringStatus;
   }
 }

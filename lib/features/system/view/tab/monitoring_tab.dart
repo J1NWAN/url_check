@@ -13,7 +13,7 @@ class MonitoringTab extends ConsumerStatefulWidget {
 
 class _MonitoringTabState extends ConsumerState<MonitoringTab> with AutomaticKeepAliveClientMixin {
   @override
-  bool get wantKeepAlive => false; // 탭 변경 시 상태를 유지하지 않음
+  bool get wantKeepAlive => true; // 탭 변경 시 상태를 유지하도록 변경
 
   @override
   void initState() {
@@ -42,7 +42,7 @@ class _MonitoringTabState extends ConsumerState<MonitoringTab> with AutomaticKee
 
     return RefreshIndicator(
       onRefresh: () async {
-        _loadData(); // 수동 새로고침 지원
+        await ref.read(monitoringViewModelProvider.notifier).refresh();
       },
       child: Column(
         children: [
