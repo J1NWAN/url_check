@@ -68,8 +68,6 @@ class SystemDetailViewModel extends _$SystemDetailViewModel {
           return menuName.contains(searchLower) || path.contains(searchLower);
         }).toList();
 
-        print('Filtered systems: $filteredSystems');
-
         state = state.copyWith(
           systemMenuList: filteredSystems,
           isLoading: false,
@@ -199,7 +197,6 @@ class SystemDetailViewModel extends _$SystemDetailViewModel {
       confirmText: '삭제',
       cancelText: '취소',
       onConfirm: () {
-        print('docId: $docId');
         final repository = ref.read(systemRepositoryProvider);
         repository.deleteSystemMenu(docId);
 

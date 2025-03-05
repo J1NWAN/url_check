@@ -124,7 +124,6 @@ class MonitoringViewModel extends _$MonitoringViewModel {
         value['responseTime'] = (value['responseTime'] / (value['successCount'] + value['errorCount'])).round();
       }
     });
-    print(monitoringStatus);
     return monitoringStatus;
   }
 }

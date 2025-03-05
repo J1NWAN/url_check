@@ -264,7 +264,6 @@ class DashboardViewModel extends _$DashboardViewModel {
             }
 
             state = state.copyWith(dashboardStatusList: statusList);
-            print('statusList: $statusList');
           }
         });
       }

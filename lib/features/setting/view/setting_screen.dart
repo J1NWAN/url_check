@@ -15,7 +15,6 @@ class SettingScreen extends ConsumerWidget {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            print('onPressed ${context.canPop()}');
             if (context.canPop()) {
               context.pop();
             } else {
