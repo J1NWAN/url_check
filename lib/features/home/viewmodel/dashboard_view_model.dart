@@ -136,8 +136,10 @@ class DashboardViewModel extends _$DashboardViewModel {
             }
 
             /// 평균 응답 시간 계산
-            final firstAverageResponseTime = firstTotalResponseTime / firstInspectionHistoryList.length;
-            final secondAverageResponseTime = secondTotalResponseTime / secondInspectionHistoryList.length;
+            final firstAverageResponseTime =
+                firstInspectionHistoryList.isEmpty ? 0 : firstTotalResponseTime / firstInspectionHistoryList.length;
+            final secondAverageResponseTime =
+                secondInspectionHistoryList.isEmpty ? 0 : secondTotalResponseTime / secondInspectionHistoryList.length;
 
             // systemCount를 먼저 가져온 후 나머지 로직 실행
             systemRepository.fetchSystemCount().then((systemCount) {
@@ -258,8 +260,8 @@ class DashboardViewModel extends _$DashboardViewModel {
               statusList.add({
                 'index': i,
                 'systemCode': systemCode,
-                'successCount': systemStatusCounts[systemCode]!['successCount'],
-                'errorCount': systemStatusCounts[systemCode]!['errorCount'],
+                'successCount': systemStatusCounts[systemCode]?['successCount'] ?? 0,
+                'errorCount': systemStatusCounts[systemCode]?['errorCount'] ?? 0,
               });
             }
 

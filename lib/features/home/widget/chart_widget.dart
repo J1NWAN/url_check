@@ -40,6 +40,11 @@ class BarChartSample6 extends StatelessWidget {
     double quickWorkout,
     double cycling,
   ) {
+    // 무한대나 NaN 값을 0으로 처리
+    pilates = pilates.isFinite ? pilates : 0;
+    quickWorkout = quickWorkout.isFinite ? quickWorkout : 0;
+    cycling = cycling.isFinite ? cycling : 0;
+
     return BarChartGroupData(
       x: x,
       groupVertically: true,
@@ -64,9 +69,12 @@ class BarChartSample6 extends StatelessWidget {
     const style = TextStyle(fontSize: 8);
     String text = '';
 
-    for (var status in dashboardStatusList) {
-      if (status['index'] == value.toInt()) {
-        text = status['systemCode'];
+    // value가 유한한 값인지 확인 후 toInt() 호출
+    if (value.isFinite) {
+      for (var status in dashboardStatusList) {
+        if (status['index'] == value.toInt()) {
+          text = status['systemCode'];
+        }
       }
     }
 
