@@ -6,7 +6,8 @@ import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/system/viewmodel/inspection_history_view_model.dart';
 
 class InspectionHistoryTab extends ConsumerWidget {
-  const InspectionHistoryTab({super.key});
+  final DateTime? selectedDate;
+  const InspectionHistoryTab({super.key, this.selectedDate});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +23,7 @@ class InspectionHistoryTab extends ConsumerWidget {
               Expanded(
                 child: CustomDatePicker(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                  initialDate: DateTime.now(),
+                  initialDate: selectedDate ?? state.startDate,
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2100),
                   onDateSelected: (date) {
@@ -37,7 +38,7 @@ class InspectionHistoryTab extends ConsumerWidget {
               Expanded(
                 child: CustomDatePicker(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                  initialDate: DateTime.now(),
+                  initialDate: selectedDate ?? state.endDate,
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2100),
                   onDateSelected: (date) {

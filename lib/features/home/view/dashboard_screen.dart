@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_check/core/datepicker/custom_date_picker.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/widget/chart_widget.dart';
 import 'package:url_check/features/home/viewmodel/dashboard_view_model.dart';
+import 'package:url_check/features/system/viewmodel/inspection_history_view_model.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -126,7 +128,11 @@ class DashboardScreen extends ConsumerWidget {
                     if (dashboardState.dashboardResultList.isNotEmpty)
                       InkWell(
                         onTap: () {
-                          print('전체 결과 보기 탭');
+                          // 선택된 날짜를 가지고 점검 이력 탭으로 이동
+                          final selectedDate = dashboardState.selectedDate;
+
+                          // 점검 이력 화면으로 이동하면서 선택된 날짜를 extra 파라미터로 전달
+                          context.go('/system/history', extra: selectedDate);
                         },
                         child: Padding(
                           padding: EdgeInsets.zero,

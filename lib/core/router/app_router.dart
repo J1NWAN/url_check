@@ -46,6 +46,16 @@ final routerProvider = Provider((ref) {
                 ),
               ),
               GoRoute(
+                path: '/history',
+                pageBuilder: (context, state) => CustomPageTransition.noTransition(
+                  key: state.pageKey,
+                  child: SystemScreen(
+                    initialTabIndex: 2,
+                    selectedDate: state.extra as DateTime?,
+                  ),
+                ),
+              ),
+              GoRoute(
                 path: 'monitoring/detail',
                 pageBuilder: (context, state) => CustomPageTransition.slideTransition(
                   key: state.pageKey,
@@ -74,6 +84,7 @@ int _getCurrentIndex(String location) {
     case '/':
       return 0;
     case '/system':
+    case '/system/history':
       return 1;
     default:
       return 0;

@@ -59,6 +59,15 @@ class InspectionHistoryViewModel extends _$InspectionHistoryViewModel {
     fetchInspectionHistoryList(); // 날짜가 변경될 때마다 조회
   }
 
+  // 특정 날짜로 설정하는 메서드 (대시보드에서 이동 시 사용)
+  void setSelectedDate(DateTime date) {
+    state = state.copyWith(
+      startDate: date,
+      endDate: date,
+    );
+    fetchInspectionHistoryList();
+  }
+
   void fetchInspectionHistoryList() {
     final repository = ref.read(inspectionHistoryRepositoryProvider);
     repository

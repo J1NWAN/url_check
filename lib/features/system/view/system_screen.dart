@@ -4,9 +4,17 @@ import 'package:url_check/features/system/view/tab/monitoring_tab.dart';
 import 'package:url_check/features/system/view/tab/system_list_tab.dart';
 import 'package:url_check/features/system/viewmodel/system_list_view_model.dart';
 import 'package:url_check/features/system/view/tab/inspection_history_tab.dart';
+import 'package:url_check/features/system/viewmodel/inspection_history_view_model.dart';
 
 class SystemScreen extends ConsumerStatefulWidget {
-  const SystemScreen({super.key});
+  final int initialTabIndex;
+  final DateTime? selectedDate;
+
+  const SystemScreen({
+    super.key,
+    this.initialTabIndex = 0,
+    this.selectedDate,
+  });
 
   @override
   ConsumerState<SystemScreen> createState() => _SystemScreenState();
@@ -18,8 +26,15 @@ class _SystemScreenState extends ConsumerState<SystemScreen> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: widget.initialTabIndex);
     _tabController.addListener(_handleTabSelection);
+
+    // 선택된 날짜가 있으면 InspectionHistoryViewModel에 설정
+    if (widget.selectedDate != null && widget.initialTabIndex == 2) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(inspectionHistoryViewModelProvider.notifier).setSelectedDate(widget.selectedDate!);
+      });
+    }
   }
 
   @override
@@ -50,10 +65,10 @@ class _SystemScreenState extends ConsumerState<SystemScreen> with SingleTickerPr
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [
-                SystemListTab(),
-                MonitoringTab(),
-                InspectionHistoryTab(),
+              children: [
+                const SystemListTab(),
+                const MonitoringTab(),
+                InspectionHistoryTab(selectedDate: widget.selectedDate),
               ],
             ),
           ),
