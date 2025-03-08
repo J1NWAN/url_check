@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:url_check/core/button/custom_dropdown_button.dart';
 import 'package:url_check/core/datepicker/custom_date_picker.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
@@ -73,21 +72,21 @@ class DashboardScreen extends ConsumerWidget {
                         Text('최근 점검 결과', style: CustomTextTheme.theme.bodyLarge),
                       ],
                     ),
-                    ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: dashboardState.dashboardResultList.length,
-                      separatorBuilder: (context, index) => const Divider(),
-                      itemBuilder: (context, index) {
-                        final result = dashboardState.dashboardResultList[index];
-                        final isOk = result['status'] == 'OK';
+                    dashboardState.dashboardResultList.isNotEmpty
+                        ? ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: dashboardState.dashboardResultList.length,
+                            separatorBuilder: (context, index) => const Divider(),
+                            itemBuilder: (context, index) {
+                              final result = dashboardState.dashboardResultList[index];
+                              final isOk = result['status'] == 'OK';
 
-                        return GestureDetector(
-                          onTap: () {
-                            print('tapped');
-                          },
-                          child: dashboardState.dashboardResultList.isNotEmpty
-                              ? ListTile(
+                              return GestureDetector(
+                                onTap: () {
+                                  print('tapped');
+                                },
+                                child: ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   leading: Icon(
                                     isOk ? Icons.sentiment_very_satisfied_rounded : Icons.sentiment_very_dissatisfied_rounded,
@@ -100,7 +99,7 @@ class DashboardScreen extends ConsumerWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        '${result['completedTime']}분 전',
+                                        getTimeAgo(result['completedTime'] as int),
                                         style: CustomTextTheme.theme.bodySmall,
                                       ),
                                       const SizedBox(height: 4),
@@ -114,29 +113,33 @@ class DashboardScreen extends ConsumerWidget {
                                       ),
                                     ],
                                   ),
-                                )
-                              : Center(
-                                  child: Text('점검 이력이 없습니다.', style: CustomTextTheme.theme.bodySmall),
                                 ),
-                        );
-                      },
-                    ),
-                    InkWell(
-                      onTap: () {
-                        print('전체 결과 보기 탭');
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.zero,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text('전체 결과 보기', style: CustomTextTheme.theme.bodySmall),
-                            const SizedBox(width: 4),
-                            const Icon(Icons.arrow_forward_ios, size: 12),
-                          ],
+                              );
+                            },
+                          )
+                        : const SizedBox(
+                            height: 150,
+                            child: Center(
+                              child: Text('점검 이력이 없습니다.'),
+                            ),
+                          ),
+                    if (dashboardState.dashboardResultList.isNotEmpty)
+                      InkWell(
+                        onTap: () {
+                          print('전체 결과 보기 탭');
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.zero,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text('전체 결과 보기', style: CustomTextTheme.theme.bodySmall),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.arrow_forward_ios, size: 12),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -200,5 +203,15 @@ class DashboardScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  // 경과 시간을 사람이 읽기 쉬운 형태로 변환하는 메소드
+  String getTimeAgo(int minutes) {
+    if (minutes < 1) return '1분 전';
+    if (minutes < 60) return '$minutes분 전';
+    if (minutes < 24 * 60) return '${(minutes / 60).floor()}시간 전';
+    if (minutes < 30 * 24 * 60) return '${(minutes / (24 * 60)).floor()}일 전';
+    if (minutes < 12 * 30 * 24 * 60) return '${(minutes / (30 * 24 * 60)).floor()}개월 전';
+    return '${(minutes / (12 * 30 * 24 * 60)).floor()}년 전';
   }
 }
