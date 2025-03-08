@@ -44,7 +44,7 @@ class DashboardScreen extends ConsumerWidget {
                       firstDate: DateTime(2000),
                       lastDate: DateTime(2100),
                       onDateSelected: (date) {
-                        // ref.read(dashboardViewModelProvider.notifier).updateSelectedDate(date);
+                        ref.read(dashboardViewModelProvider.notifier).updateSelectedDate(date);
                       },
                     ),
                   ),

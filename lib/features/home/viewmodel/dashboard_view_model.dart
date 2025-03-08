@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:url_check/features/system/model/inspection_history_model.dart';
 import 'package:url_check/features/system/repository/inspection_history_repository.dart';
@@ -47,6 +48,12 @@ class DashboardViewModel extends _$DashboardViewModel {
     setDashboardStatusList();
   }
 
+  void updateSelectedDate(DateTime date) {
+    state = state.copyWith(selectedDate: date);
+    setDashboardResultList();
+    setDashboardStatusList();
+  }
+
   /// ************* 대시보드 최근 점검 결과 리스트 설정 **************
   void setDashboardResultList() {
     final systemRepository = ref.read(systemRepositoryProvider);
@@ -70,7 +77,7 @@ class DashboardViewModel extends _$DashboardViewModel {
           path: menu.path,
         );
 
-        final searchTime = DateTime.now();
+        final searchTime = state.selectedDate;
         final inspectionResultList = inspectionHistoryRepository.fetchLatestInspectionHistoryList(model, searchTime, limit: 2);
 
         int index = 0;
@@ -209,7 +216,7 @@ class DashboardViewModel extends _$DashboardViewModel {
           path: menu.path,
         );
 
-        final searchTime = DateTime.now();
+        final searchTime = state.selectedDate;
         final inspectionResultList = inspectionHistoryRepository.fetchLatestInspectionHistoryList(model, searchTime);
 
         inspectionResultList.listen((snapshot) {
