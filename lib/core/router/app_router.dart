@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/core/layout/main_layout.dart';
 import 'package:url_check/features/home/view/home_screen.dart';
+import 'package:url_check/features/login/view/login_screen.dart';
 import 'package:url_check/features/system/model/system_model.dart';
 import 'package:url_check/features/system/view/tab/view/monitoring_detail_screen.dart';
 import 'package:url_check/features/system/view/system_screen.dart';
@@ -11,8 +12,15 @@ import 'package:url_check/features/system/view/tab/view/system_list_detail_scree
 
 final routerProvider = Provider((ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/login',
     routes: [
+      GoRoute(
+        path: '/login',
+        pageBuilder: (context, state) => CustomPageTransition.noTransition(
+          key: state.pageKey,
+          child: const LoginScreen(),
+        ),
+      ),
       ShellRoute(
         builder: (context, state, child) {
           if (!state.uri.toString().contains("detail")) {
@@ -25,7 +33,7 @@ final routerProvider = Provider((ref) {
         },
         routes: [
           GoRoute(
-            path: '/',
+            path: '/home',
             pageBuilder: (context, state) => CustomPageTransition.noTransition(
               key: state.pageKey,
               child: const HomeScreen(),
@@ -81,7 +89,7 @@ final routerProvider = Provider((ref) {
 });
 int _getCurrentIndex(String location) {
   switch (location) {
-    case '/':
+    case '/home':
       return 0;
     case '/system':
     case '/system/history':

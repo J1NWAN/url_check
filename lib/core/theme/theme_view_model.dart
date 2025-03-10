@@ -26,8 +26,10 @@ class ThemeViewModel extends _$ThemeViewModel {
   ThemeData _getLightTheme() {
     return ThemeData(
       brightness: Brightness.light,
+      //primaryColor: const Color.fromRGBO(47, 112, 243, 1.0),
       colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.deepPurple,
+        primary: const Color.fromRGBO(47, 112, 243, 1.0),
+        seedColor: const Color.fromRGBO(47, 112, 243, 1.0),
         brightness: Brightness.light,
       ),
       useMaterial3: true,
@@ -38,8 +40,10 @@ class ThemeViewModel extends _$ThemeViewModel {
   ThemeData _getDarkTheme() {
     return ThemeData(
       brightness: Brightness.dark,
+      //primaryColor: const Color.fromRGBO(47, 112, 243, 1.0),
       colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.deepPurple,
+        primary: const Color.fromRGBO(47, 112, 243, 1.0),
+        seedColor: const Color.fromRGBO(47, 112, 243, 1.0),
         brightness: Brightness.dark,
       ),
       useMaterial3: true,
