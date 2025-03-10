@@ -14,7 +14,6 @@ class CustomButton extends StatefulWidget {
   final EdgeInsets padding;
 
   const CustomButton._({
-    super.key,
     required this.text,
     this.onPressed,
     required this.type,

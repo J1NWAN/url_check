@@ -7,7 +7,6 @@ import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/widget/chart_widget.dart';
 import 'package:url_check/features/home/viewmodel/dashboard_view_model.dart';
-import 'package:url_check/features/system/viewmodel/inspection_history_view_model.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});

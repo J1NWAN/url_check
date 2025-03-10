@@ -4,7 +4,6 @@ import 'package:url_check/core/dialog/custom_dialog.dart';
 import 'package:url_check/core/snackbar/custom_snackbar.dart';
 import 'package:url_check/core/snackbar/enum/snackbar_type.dart';
 import 'package:url_check/core/textfield/model/text_field_config.dart';
-import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/system/model/system_model.dart';
 import 'package:url_check/features/system/repository/system_repository.dart';
 

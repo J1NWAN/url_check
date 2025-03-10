@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:url_check/features/system/model/inspection_history_model.dart';
 import 'package:url_check/features/system/repository/inspection_history_repository.dart';

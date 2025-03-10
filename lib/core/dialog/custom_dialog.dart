@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_check/core/button/custom_dropdown_button.dart';
 import 'package:url_check/core/dialog/custom_dialog_overlay.dart';
-import 'package:url_check/core/dialog/enum/dialog_type.dart';
 import 'package:url_check/core/textfield/model/text_field_config.dart';
 import 'package:url_check/core/dialog/model/dialog_config.dart';
 
