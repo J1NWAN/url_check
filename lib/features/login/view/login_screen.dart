@@ -108,7 +108,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                          borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
                         ),
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -148,7 +148,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                          borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
                         ),
                       ),
                       obscureText: !isPasswordVisible,
@@ -193,7 +193,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ElevatedButton(
                       onPressed: _login,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
+                        backgroundColor: theme.colorScheme.primary,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
