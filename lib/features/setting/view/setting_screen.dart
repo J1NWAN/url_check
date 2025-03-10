@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_check/core/dialog/custom_dialog.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:go_router/go_router.dart';
 
@@ -34,6 +35,24 @@ class SettingScreen extends ConsumerWidget {
                 ref.read(themeViewModelProvider.notifier).toggleTheme();
               },
             ),
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: const Text('로그아웃', style: TextStyle(color: Colors.red)),
+            onTap: () {
+              CustomDialog.show(
+                context,
+                title: '로그아웃',
+                content: '정말 로그아웃 하시겠습니까?',
+                showIcon: false,
+                confirmText: '로그아웃',
+                cancelText: '취소',
+                onConfirm: () {
+                  context.go('/login');
+                },
+              );
+            },
           ),
         ],
       ),
