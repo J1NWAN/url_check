@@ -142,7 +142,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('회원가입'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: _previousStep,
