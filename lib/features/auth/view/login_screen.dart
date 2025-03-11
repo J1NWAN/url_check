@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
-import 'package:url_check/core/theme/app_theme.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -263,6 +262,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         TextButton(
                           onPressed: () {
                             // 회원가입 화면으로 이동
+                            context.go('/signup');
                           },
                           child: const Text('회원가입'),
                         ),

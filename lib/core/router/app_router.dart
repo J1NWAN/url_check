@@ -1,8 +1,9 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/core/layout/main_layout.dart';
+import 'package:url_check/features/auth/view/signup_screen.dart';
 import 'package:url_check/features/home/view/home_screen.dart';
-import 'package:url_check/features/login/view/login_screen.dart';
+import 'package:url_check/features/auth/view/login_screen.dart';
 import 'package:url_check/features/system/model/system_model.dart';
 import 'package:url_check/features/system/view/tab/view/monitoring_detail_screen.dart';
 import 'package:url_check/features/system/view/system_screen.dart';
@@ -19,6 +20,13 @@ final routerProvider = Provider((ref) {
         pageBuilder: (context, state) => CustomPageTransition.noTransition(
           key: state.pageKey,
           child: const LoginScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/signup',
+        pageBuilder: (context, state) => CustomPageTransition.fadeTransition(
+          key: state.pageKey,
+          child: const SignupScreen(),
         ),
       ),
       ShellRoute(
