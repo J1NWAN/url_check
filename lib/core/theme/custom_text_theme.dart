@@ -5,17 +5,17 @@ class CustomTextTheme {
   static TextTheme theme = TextTheme(
     // 헤드라인
     displayLarge: GoogleFonts.notoSansKr(
-      fontSize: 32,
+      fontSize: 22,
       fontWeight: FontWeight.bold,
       letterSpacing: -1.0,
     ),
     displayMedium: GoogleFonts.notoSansKr(
-      fontSize: 28,
+      fontSize: 20,
       fontWeight: FontWeight.bold,
       letterSpacing: -0.5,
     ),
     displaySmall: GoogleFonts.notoSansKr(
-      fontSize: 24,
+      fontSize: 18,
       fontWeight: FontWeight.bold,
     ),
 
