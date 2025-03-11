@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_check/core/theme/custom_text_theme.dart';
 
 class SignupCredentialsStep extends StatefulWidget {
   final TextEditingController idController;
@@ -31,7 +32,7 @@ class _SignupCredentialsStepState extends State<SignupCredentialsStep> {
         Text(
           '로그인에 사용할\n아이디와 비밀번호를 입력해주세요.',
           style: GoogleFonts.notoSansKr(
-            fontSize: 24,
+            fontSize: CustomTextTheme.theme.displaySmall?.fontSize,
             fontWeight: FontWeight.bold,
           ),
         ),
