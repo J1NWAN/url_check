@@ -8,6 +8,7 @@ import 'package:url_check/core/toast/enum/toast_type.dart';
 import 'package:url_check/features/auth/view/step/signup_terms_step.dart';
 import 'package:url_check/features/auth/view/step/signup_profile_step.dart';
 import 'package:url_check/features/auth/view/step/signup_credentials_step.dart';
+import 'package:url_check/features/auth/viewmodel/signup_view_model.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -84,26 +85,12 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   // 회원가입 완료
   void _completeSignup() {
-    if (_idController.text.isEmpty) {
-      CustomToast.show(context, '아이디를 입력해주세요', type: ToastType.error);
-      return;
-    }
-
-    if (_passwordController.text.isEmpty) {
-      CustomToast.show(context, '비밀번호를 입력해주세요', type: ToastType.error);
-      return;
-    }
-
-    if (_passwordController.text != _confirmPasswordController.text) {
-      CustomToast.show(context, '비밀번호가 일치하지 않습니다', type: ToastType.error);
-      return;
-    }
-
-    // 회원가입 로직 구현
-    // 성공 시 로그인 화면으로 이동
-    CustomToast.show(context, '회원가입이 완료되었습니다', type: ToastType.success);
-
-    context.go('/login');
+    ref.read(signupViewModelProvider).idController.text = _idController.text;
+    ref.read(signupViewModelProvider).nameController.text = _nameController.text;
+    ref.read(signupViewModelProvider).emailController.text = _emailController.text;
+    ref.read(signupViewModelProvider).passwordController.text = _passwordController.text;
+    ref.read(signupViewModelProvider).confirmPasswordController.text = _confirmPasswordController.text;
+    ref.read(signupViewModelProvider.notifier).signup(context);
   }
 
   // 모든 동의 상태 업데이트
