@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
+import 'package:url_check/features/auth/viewmodel/login_view_model.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -34,11 +35,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   void _login() {
-    context.go('/home');
     if (formKey.currentState!.validate()) {
-      // 로그인 로직 구현
-      // 성공 시 홈 화면으로 이동
-      context.go('/home');
+      ref.read(loginViewModelProvider).idController.text = idController.text;
+      ref.read(loginViewModelProvider).passwordController.text = passwordController.text;
+      ref.read(loginViewModelProvider.notifier).login(context);
     }
   }
 
