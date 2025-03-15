@@ -118,7 +118,13 @@ class MonitoringViewModel extends _$MonitoringViewModel {
             (monitoringStatus['${monitoring['systemCode']}']!['errorCount'] ?? 0) + 1;
       }
     }
-
+    for (var value in monitoringStatus.values) {
+      if (value['errorCount'] > 0) {
+        value['status'] = 'ERROR';
+      } else {
+        value['status'] = 'OK';
+      }
+    }
     monitoringStatus.forEach((key, value) {
       if (value['responseTime'] != 0) {
         value['responseTime'] = (value['responseTime'] / (value['successCount'] + value['errorCount'])).round();
