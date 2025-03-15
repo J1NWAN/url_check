@@ -61,6 +61,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         CustomToast.show(context, '이메일을 입력해주세요', type: ToastType.error);
         return;
       }
+      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(_emailController.text)) {
+        return;
+      }
     }
 
     if (_currentStep < 2) {
