@@ -63,8 +63,11 @@ class SignupViewModel extends _$SignupViewModel {
       return;
     }
 
+    if (state.passwordController.text.length < 8 || state.passwordController.text.length > 20) {
+      return;
+    }
+
     if (state.passwordController.text != state.confirmPasswordController.text) {
-      CustomToast.show(context, '비밀번호가 일치하지 않습니다', type: ToastType.error);
       return;
     }
 
