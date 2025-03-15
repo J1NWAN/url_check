@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_check/core/dialog/custom_dialog.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_check/features/setting/view/widget/profile_section_widget.dart';
 
 class SettingScreen extends ConsumerWidget {
   const SettingScreen({super.key});
@@ -27,6 +28,12 @@ class SettingScreen extends ConsumerWidget {
       ),
       body: ListView(
         children: [
+          // 프로필 섹션 (별도 위젯으로 분리)
+          const ProfileSection(),
+
+          const Divider(),
+
+          // 설정 항목들
           ListTile(
             title: const Text('다크 모드'),
             trailing: Switch(
