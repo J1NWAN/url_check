@@ -194,6 +194,7 @@ class _SystemListTabState extends ConsumerState<SystemListTab> {
             context.push('/system/systemList/detail', extra: system);
           },
           child: Container(
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
               borderRadius: BorderRadius.circular(10),
@@ -205,7 +206,7 @@ class _SystemListTabState extends ConsumerState<SystemListTab> {
                 const SizedBox(height: 8),
                 Text(
                   system.systemNameKo ?? '',
-                  style: CustomTextTheme.theme.bodyLarge,
+                  style: CustomTextTheme.theme.bodyMedium,
                 ),
                 const SizedBox(height: 4),
                 Text(
