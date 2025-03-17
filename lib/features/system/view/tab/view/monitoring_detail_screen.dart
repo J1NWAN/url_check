@@ -117,7 +117,7 @@ class _MonitoringDetailScreenState extends ConsumerState<MonitoringDetailScreen>
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: index % 5 == 0 ? Colors.red : Colors.green,
+                            color: menu['actual_status'] == 'OK' ? Colors.green : Colors.red,
                             shape: BoxShape.circle,
                           ),
                         ),
