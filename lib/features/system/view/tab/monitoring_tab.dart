@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
+import 'package:url_check/features/system/model/system_model.dart';
 import 'package:url_check/features/system/viewmodel/monitoring_view_model.dart';
 
 class MonitoringTab extends ConsumerStatefulWidget {
@@ -147,7 +148,12 @@ class _MonitoringTabState extends ConsumerState<MonitoringTab> with AutomaticKee
                                       const SizedBox(width: 16),
                                       TextButton.icon(
                                         onPressed: () {
-                                          context.push('/system/monitoring/detail');
+                                          SystemModel system = SystemModel(
+                                            systemNameKo: systemEntries[index].value['systemNameKo'],
+                                            systemNameEn: systemEntries[index].value['systemNameEn'],
+                                            url: systemEntries[index].value['systemUrl'],
+                                          );
+                                          context.push('/system/monitoring/detail', extra: system);
                                           // Navigator.push(
                                           //   context,
                                           //   MaterialPageRoute(

@@ -80,4 +80,27 @@ class MonitoringRepository {
       throw Exception("최신 점검 이력 조회 실패: $e");
     }
   }
+
+  /// ************* 모니터링 상세 조회 **************
+  Future<List<Map<String, dynamic>>> fetchMonitoringDetail(String systemNameEn) async {
+    final monitoringDetail = await _firestore.collection('system_menu').where('system_code', isEqualTo: systemNameEn).get();
+    List<Map<String, dynamic>> monitoringList = [];
+
+    for (final menu in monitoringDetail.docs) {
+      final menuData = menu.data();
+      final checkHistoryQuery = await _firestore
+          .collection('url_check_history')
+          .where('system_code', isEqualTo: systemNameEn)
+          .where('path', isEqualTo: menuData['path'])
+          .orderBy('created_at', descending: true)
+          .limit(1) // 최신 기록 하나만 가져오기
+          .get();
+
+      if (checkHistoryQuery.docs.isNotEmpty) {
+        final checkData = checkHistoryQuery.docs.first.data();
+        monitoringList.add(checkData);
+      }
+    }
+    return monitoringList;
+  }
 }

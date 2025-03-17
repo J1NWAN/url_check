@@ -1,20 +1,32 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
+import 'package:url_check/features/system/model/system_model.dart';
+import 'package:url_check/features/system/viewmodel/monitoring_view_model.dart';
 
-class SystemDetailScreen extends ConsumerWidget {
-  final String systemName;
-  final String systemUrl;
+class MonitoringDetailScreen extends ConsumerStatefulWidget {
+  final SystemModel system;
 
-  const SystemDetailScreen({
+  const MonitoringDetailScreen({
     super.key,
-    required this.systemName,
-    required this.systemUrl,
+    required this.system,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MonitoringDetailScreen> createState() => _MonitoringDetailScreenState();
+}
+
+class _MonitoringDetailScreenState extends ConsumerState<MonitoringDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(monitoringViewModelProvider.notifier).fetchMonitoringDetail(widget.system.systemNameEn ?? '');
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -30,7 +42,7 @@ class SystemDetailScreen extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.only(left: 16, right: 16, top: 10),
             width: double.infinity,
-            child: Text(systemName, style: CustomTextTheme.theme.bodyLarge),
+            child: Text(widget.system.systemNameKo ?? '', style: CustomTextTheme.theme.bodyLarge),
           ),
           // 시스템 요약 정보
           Container(
@@ -41,7 +53,7 @@ class SystemDetailScreen extends ConsumerWidget {
                   child: _buildSummaryItem(
                     context,
                     title: '전체 메뉴',
-                    value: '15',
+                    value: ref.watch(monitoringViewModelProvider).monitoringDetailList.length.toString(),
                     icon: Icons.menu,
                   ),
                 ),
@@ -50,7 +62,12 @@ class SystemDetailScreen extends ConsumerWidget {
                   child: _buildSummaryItem(
                     context,
                     title: '정상',
-                    value: '13',
+                    value: ref
+                        .watch(monitoringViewModelProvider)
+                        .monitoringDetailList
+                        .where((element) => element['actual_status'] == 'OK')
+                        .length
+                        .toString(),
                     icon: Icons.check_circle,
                     valueColor: Colors.green,
                   ),
@@ -60,7 +77,12 @@ class SystemDetailScreen extends ConsumerWidget {
                   child: _buildSummaryItem(
                     context,
                     title: '오류',
-                    value: '2',
+                    value: ref
+                        .watch(monitoringViewModelProvider)
+                        .monitoringDetailList
+                        .where((element) => element['actual_status'] == 'ERROR')
+                        .length
+                        .toString(),
                     icon: Icons.error,
                     valueColor: Colors.red,
                   ),
@@ -73,9 +95,11 @@ class SystemDetailScreen extends ConsumerWidget {
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(16),
-              itemCount: 15,
+              itemCount: ref.watch(monitoringViewModelProvider).monitoringDetailList.length,
               separatorBuilder: (context, index) => const SizedBox(height: 16),
               itemBuilder: (context, index) {
+                final menu = ref.watch(monitoringViewModelProvider).monitoringDetailList[index];
+
                 return Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
@@ -103,12 +127,12 @@ class SystemDetailScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                '공지사항',
+                                menu['menu_name'],
                                 style: CustomTextTheme.theme.bodyLarge,
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '$systemUrl/notice',
+                                menu['path'],
                                 style: CustomTextTheme.theme.bodySmall,
                               ),
                             ],
@@ -121,10 +145,9 @@ class SystemDetailScreen extends ConsumerWidget {
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           children: [
-                            _buildDetailRow('마지막 점검', '2024-03-21 15:30:00'),
-                            _buildDetailRow('응답 시간', '0.8초'),
-                            _buildDetailRow('상태 코드', '200 OK'),
-                            _buildDetailRow('금일 가용성', '99.9%'),
+                            _buildDetailRow('마지막 점검', (menu['created_at'] as Timestamp).toDate().toString().substring(0, 16)),
+                            _buildDetailRow('응답 시간', '${menu['response_time']}초'),
+                            _buildDetailRow('상태 코드', menu['actual_status']),
                             const SizedBox(height: 16),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,

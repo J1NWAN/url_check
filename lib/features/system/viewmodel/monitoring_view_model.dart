@@ -8,22 +8,26 @@ part 'monitoring_view_model.g.dart';
 class MonitoringState {
   final List<SystemModel> systemList;
   final Map<String, Map<String, dynamic>> systemStatuses;
+  final List<Map<String, dynamic>> monitoringDetailList;
   final bool isLoading;
 
   MonitoringState({
     this.systemList = const [],
     this.systemStatuses = const {},
+    this.monitoringDetailList = const [],
     this.isLoading = false,
   });
 
   MonitoringState copyWith({
     List<SystemModel>? systemList,
     Map<String, Map<String, dynamic>>? systemStatuses,
+    List<Map<String, dynamic>>? monitoringDetailList,
     bool? isLoading,
   }) {
     return MonitoringState(
       systemList: systemList ?? this.systemList,
       systemStatuses: systemStatuses ?? this.systemStatuses,
+      monitoringDetailList: monitoringDetailList ?? this.monitoringDetailList,
       isLoading: isLoading ?? this.isLoading,
     );
   }
@@ -131,5 +135,13 @@ class MonitoringViewModel extends _$MonitoringViewModel {
       }
     });
     return monitoringStatus;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchMonitoringDetail(String systemNameEn) async {
+    final repository = ref.read(monitoringRepositoryProvider);
+    final monitoringDetailList = await repository.fetchMonitoringDetail(systemNameEn);
+    print('monitoringDetailList: $monitoringDetailList');
+    state = state.copyWith(monitoringDetailList: monitoringDetailList);
+    return monitoringDetailList;
   }
 }

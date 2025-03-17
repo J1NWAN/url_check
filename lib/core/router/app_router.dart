@@ -75,10 +75,7 @@ final routerProvider = Provider((ref) {
                 path: 'monitoring/detail',
                 pageBuilder: (context, state) => CustomPageTransition.slideTransition(
                   key: state.pageKey,
-                  child: const SystemDetailScreen(
-                    systemName: '기관홈페이지 (WWW)',
-                    systemUrl: 'https://www.kins.re.kr',
-                  ),
+                  child: MonitoringDetailScreen(system: state.extra as SystemModel),
                 ),
               ),
             ],

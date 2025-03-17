@@ -52,6 +52,7 @@ class SystemDetailViewModel extends _$SystemDetailViewModel {
 
   // initState 메서드 추가
   void initState(String systemCode) {
+    print('initState: $systemCode');
     _initSystemMenu(systemCode);
   }
 
