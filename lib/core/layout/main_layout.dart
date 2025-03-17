@@ -19,7 +19,12 @@ class MainLayout extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 10,
-        title: title != null ? Text(title!) : Text('URL\nChecker', style: GoogleFonts.blackOpsOne(fontSize: 16)),
+        title: GestureDetector(
+          onTap: () {
+            context.go('/home');
+          },
+          child: title != null ? Text(title!) : Text('URL\nChecker', style: GoogleFonts.blackOpsOne(fontSize: 16)),
+        ),
         backgroundColor: Theme.of(context).colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
