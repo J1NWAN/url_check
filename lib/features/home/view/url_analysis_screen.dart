@@ -5,6 +5,7 @@ import 'package:url_check/core/button/custom_button.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
 import 'package:url_check/features/home/viewmodel/url_analysis_view_model.dart';
+import 'package:url_check/features/system/model/system_menu_model.dart';
 
 class UrlAnalysisScreen extends ConsumerWidget {
   const UrlAnalysisScreen({super.key});
@@ -146,6 +147,17 @@ class UrlAnalysisScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  _buildResultCard(
+                    context,
+                    title: '점검대상 메뉴',
+                    backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
+                    icon: Icons.info_outline,
+                    content: Column(
+                      children: [
+                        _buildMenuList(context, state.menuList ?? []),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
@@ -215,6 +227,45 @@ class UrlAnalysisScreen extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMenuList(BuildContext context, List<SystemMenuModel> menuList) {
+    if (menuList.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Center(
+          child: Text('메뉴 정보가 없습니다.', style: TextStyle(color: Colors.grey)),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: menuList
+          .map((menu) => Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.grey.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.menu_book_outlined, size: 16, color: Theme.of(context).colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        menu.menuName ?? '이름 없음',
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                ),
+              ))
+          .toList(),
     );
   }
 }

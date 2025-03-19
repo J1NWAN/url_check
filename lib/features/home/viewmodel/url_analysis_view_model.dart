@@ -7,6 +7,8 @@ import 'package:url_check/core/dialog/custom_dialog.dart';
 import 'package:url_check/core/snackbar/custom_snackbar.dart';
 import 'package:url_check/core/snackbar/enum/snackbar_type.dart';
 import 'package:url_check/core/theme/theme_view_model.dart';
+import 'package:url_check/features/system/model/system_menu_model.dart';
+import 'package:url_check/features/system/repository/system_repository.dart';
 
 part 'url_analysis_view_model.g.dart';
 
@@ -17,7 +19,7 @@ class UrlAnalysisState {
   final Map<String, dynamic>? analysisResult;
   final String selectedUrlId;
   final TextEditingController urlController;
-
+  final List<SystemMenuModel>? menuList;
   UrlAnalysisState({
     this.url = '',
     this.isLoading = false,
@@ -25,6 +27,7 @@ class UrlAnalysisState {
     this.analysisResult,
     this.selectedUrlId = '1',
     TextEditingController? urlController,
+    this.menuList = const [],
   }) : urlController = urlController ?? TextEditingController();
 
   UrlAnalysisState copyWith({
@@ -34,6 +37,7 @@ class UrlAnalysisState {
     Map<String, dynamic>? analysisResult,
     String? selectedUrlId,
     TextEditingController? urlController,
+    List<SystemMenuModel>? menuList,
   }) {
     return UrlAnalysisState(
       url: url ?? this.url,
@@ -42,6 +46,7 @@ class UrlAnalysisState {
       analysisResult: analysisResult ?? this.analysisResult,
       selectedUrlId: selectedUrlId ?? this.selectedUrlId,
       urlController: urlController ?? this.urlController,
+      menuList: menuList ?? this.menuList,
     );
   }
 }
@@ -136,6 +141,12 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
         isLoading: false,
         analysisResult: result,
       );
+
+      // URL에 해당하는 시스템 ID 찾기
+      String systemId = await _findSystemIdByUrl(state.url);
+
+      // 메뉴 불러오기
+      await _fetchMenusForSystem(systemId);
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
@@ -144,38 +155,109 @@ class UrlAnalysisViewModel extends _$UrlAnalysisViewModel {
     }
   }
 
+  // URL을 기반으로 시스템 ID를 찾는 메서드
+  Future<String> _findSystemIdByUrl(String url) async {
+    final repository = ref.read(systemRepositoryProvider);
+    final systems = await repository.fetchSystems().first;
+
+    // 입력된 URL과 일치하거나 가장 유사한 시스템 찾기
+    for (var system in systems) {
+      if (system.url == url) {
+        return system.systemNameEn ?? '1'; // 기본값으로 1 설정
+      }
+    }
+
+    // URL 기본 도메인만 비교
+    Uri? inputUri = Uri.tryParse(url);
+    if (inputUri != null) {
+      String inputHost = inputUri.host;
+      for (var system in systems) {
+        Uri? systemUri = Uri.tryParse(system.url ?? '');
+        if (systemUri != null && systemUri.host == inputHost) {
+          return system.systemNameEn ?? '1';
+        }
+      }
+    }
+
+    return '1'; // 일치하는 시스템이 없을 경우 기본값 반환
+  }
+
+  // 해당 시스템의 메뉴를 가져오는 메서드
+  Future<void> _fetchMenusForSystem(String systemId) async {
+    final repository = ref.read(systemRepositoryProvider);
+    final menu = repository.fetchSystemMenu(systemId);
+
+    final menuList = await menu.first;
+    state = state.copyWith(menuList: menuList);
+  }
+
   Future<void> getUrlAnalysis(BuildContext context) async {
-    final categories = [
-      DropdownConfig(id: '1', name: 'https://www.kins.re.kr', color: '0xFF808080'),
-      DropdownConfig(id: '2', name: 'https://google.com', color: '0xFF808080'),
-    ];
+    final repository = ref.read(systemRepositoryProvider);
+    final systems = repository.fetchSystems();
 
-    await CustomDialog.show(
-      context,
-      title: 'URL 불러오기',
-      content: 'URL을 선택해주세요.',
-      showIcon: false,
-      backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
-      dropdown: CustomDropDownButton(
-        label: 'URL 선택',
-        categories: categories,
-        value: state.selectedUrlId,
-        onChanged: (value) {
-          final selectedUrl = categories.firstWhere((category) => category.id == value).name;
+    // 빈 DropdownConfig 리스트 생성
+    List<DropdownConfig> dropdownCategories = [];
 
-          state = state.copyWith(
-            selectedUrlId: value,
-            url: selectedUrl,
-          );
+    try {
+      // Stream에서 첫 번째 이벤트(시스템 목록)를 기다림
+      final systemList = await systems.first;
+
+      // 시스템 목록을 DropdownConfig로 변환
+      for (var system in systemList) {
+        dropdownCategories.add(DropdownConfig(id: system.systemNameEn ?? '', name: system.url ?? '', color: '0xFF808080'));
+      }
+
+      // 드롭다운 목록이 비어있는지 확인
+      if (dropdownCategories.isEmpty) {
+        CustomSnackBar.show(
+          context,
+          title: '알림',
+          message: '불러올 URL이 없습니다.',
+          type: SnackBarType.info,
+        );
+        return;
+      }
+
+      // 초기 선택값 설정 (첫 번째 항목)
+      String initialValue = dropdownCategories.isNotEmpty ? dropdownCategories[0].id : state.selectedUrlId;
+
+      // 다이얼로그 표시
+      await CustomDialog.show(
+        context,
+        title: 'URL 불러오기',
+        content: 'URL을 선택해주세요.',
+        showIcon: false,
+        backgroundColor: ref.watch(themeViewModelProvider).themeData.colorScheme.surface,
+        dropdown: CustomDropDownButton(
+          label: 'URL 선택',
+          categories: dropdownCategories,
+          value: state.selectedUrlId == '' ? initialValue : state.selectedUrlId,
+          onChanged: (value) {
+            final selectedUrl = dropdownCategories.firstWhere((category) => category.id == value).name;
+            state = state.copyWith(
+              selectedUrlId: value,
+              url: selectedUrl,
+            );
+          },
+        ),
+        confirmText: '적용',
+        cancelText: '취소',
+        onConfirm: () {
+          if (dropdownCategories.isNotEmpty) {
+            final selectedUrl =
+                dropdownCategories.firstWhere((category) => category.id == state.selectedUrlId, orElse: () => dropdownCategories[0]).name;
+            updateUrl(selectedUrl);
+            state.urlController.text = selectedUrl;
+          }
         },
-      ),
-      confirmText: '적용',
-      cancelText: '취소',
-      onConfirm: () {
-        final selectedUrl = categories.firstWhere((category) => category.id == state.selectedUrlId).name;
-        updateUrl(selectedUrl);
-        state.urlController.text = selectedUrl;
-      },
-    );
+      );
+    } catch (e) {
+      CustomSnackBar.show(
+        context,
+        title: '오류',
+        message: 'URL 목록을 불러오는 중 오류가 발생했습니다: $e',
+        type: SnackBarType.error,
+      );
+    }
   }
 }
