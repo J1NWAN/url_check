@@ -58,6 +58,9 @@ dependencies:
   freezed_annotation: ^2.4.1
   crypto: ^3.0.6
 
+  # Webview
+  webview_flutter: ^4.4.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

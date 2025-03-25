@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/features/system/model/system_model.dart';
+import 'package:url_check/features/system/view/widget/webview_widget.dart';
 import 'package:url_check/features/system/viewmodel/monitoring_view_model.dart';
 
 class MonitoringDetailScreen extends ConsumerStatefulWidget {
@@ -154,7 +155,7 @@ class _MonitoringDetailScreenState extends ConsumerState<MonitoringDetailScreen>
                               children: [
                                 TextButton.icon(
                                   onPressed: () {
-                                    // 메뉴 열기
+                                    showWebViewPopup(context, menu['url'], menu['menu_name']);
                                   },
                                   icon: const Icon(Icons.open_in_new),
                                   label: const Text('열기'),
@@ -221,6 +222,47 @@ class _MonitoringDetailScreenState extends ConsumerState<MonitoringDetailScreen>
           Text(label, style: CustomTextTheme.theme.bodyMedium),
           Text(value, style: CustomTextTheme.theme.bodyMedium),
         ],
+      ),
+    );
+  }
+
+  void showWebViewPopup(BuildContext context, String url, String title) {
+    if (url.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('URL이 비어있습니다.')),
+      );
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // 전체 화면 높이를 사용
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9, // 초기 크기 (화면의 90%)
+        minChildSize: 0.5, // 최소 크기 (화면의 50%)
+        maxChildSize: 0.95, // 최대 크기 (화면의 95%)
+        builder: (context, scrollController) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+              child: SystemWebViewWidget(
+                url: url,
+                title: title,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

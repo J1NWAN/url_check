@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:url_check/features/system/model/system_model.dart';
+import 'package:url_check/features/system/view/widget/webview_widget.dart';
 import 'package:url_check/features/system/viewmodel/monitoring_view_model.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class MonitoringTab extends ConsumerStatefulWidget {
   const MonitoringTab({super.key});
@@ -140,10 +142,14 @@ class _MonitoringTabState extends ConsumerState<MonitoringTab> with AutomaticKee
                                     children: [
                                       TextButton.icon(
                                         onPressed: () {
-                                          // 알림 설정
+                                          showWebViewPopup(
+                                            context,
+                                            systemEntries[index].value['systemUrl'] ?? '',
+                                            systemEntries[index].value['systemNameKo'] ?? '시스템 보기',
+                                          );
                                         },
-                                        icon: const Icon(Icons.notifications),
-                                        label: const Text('알림 설정'),
+                                        icon: const Icon(Icons.open_in_new),
+                                        label: const Text('열기'),
                                       ),
                                       const SizedBox(width: 16),
                                       TextButton.icon(
@@ -154,15 +160,6 @@ class _MonitoringTabState extends ConsumerState<MonitoringTab> with AutomaticKee
                                             url: systemEntries[index].value['systemUrl'],
                                           );
                                           context.push('/system/monitoring/detail', extra: system);
-                                          // Navigator.push(
-                                          //   context,
-                                          //   MaterialPageRoute(
-                                          //     builder: (context) => const SystemDetailScreen(
-                                          //       systemName: '기관홈페이지 (WWW)',
-                                          //       systemUrl: 'https://www.kins.re.kr',
-                                          //     ),
-                                          //   ),
-                                          // );
                                         },
                                         icon: const Icon(Icons.analytics),
                                         label: const Text('상세 통계'),
@@ -202,7 +199,7 @@ class _MonitoringTabState extends ConsumerState<MonitoringTab> with AutomaticKee
         children: [
           Row(
             children: [
-              Icon(icon, size: 16),
+              Icon(icon, size: 16, color: valueColor),
               const SizedBox(width: 8),
               Text(title, style: CustomTextTheme.theme.bodySmall),
             ],
@@ -229,6 +226,47 @@ class _MonitoringTabState extends ConsumerState<MonitoringTab> with AutomaticKee
           Text(label, style: CustomTextTheme.theme.bodyMedium),
           Text(value, style: CustomTextTheme.theme.bodyMedium),
         ],
+      ),
+    );
+  }
+
+  void showWebViewPopup(BuildContext context, String url, String title) {
+    if (url.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('URL이 비어있습니다.')),
+      );
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // 전체 화면 높이를 사용
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9, // 초기 크기 (화면의 90%)
+        minChildSize: 0.5, // 최소 크기 (화면의 50%)
+        maxChildSize: 0.95, // 최대 크기 (화면의 95%)
+        builder: (context, scrollController) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+              child: SystemWebViewWidget(
+                url: url,
+                title: title,
+              ),
+            ),
+          );
+        },
       ),
     );
   }
