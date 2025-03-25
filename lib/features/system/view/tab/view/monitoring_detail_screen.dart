@@ -154,18 +154,10 @@ class _MonitoringDetailScreenState extends ConsumerState<MonitoringDetailScreen>
                               children: [
                                 TextButton.icon(
                                   onPressed: () {
-                                    // 메뉴 수정
+                                    // 메뉴 열기
                                   },
-                                  icon: const Icon(Icons.edit),
-                                  label: const Text('수정'),
-                                ),
-                                const SizedBox(width: 16),
-                                TextButton.icon(
-                                  onPressed: () {
-                                    // 메뉴 삭제
-                                  },
-                                  icon: const Icon(Icons.delete),
-                                  label: const Text('삭제'),
+                                  icon: const Icon(Icons.open_in_new),
+                                  label: const Text('열기'),
                                 ),
                               ],
                             ),
@@ -202,7 +194,7 @@ class _MonitoringDetailScreenState extends ConsumerState<MonitoringDetailScreen>
         children: [
           Row(
             children: [
-              Icon(icon, size: 16),
+              Icon(icon, size: 16, color: valueColor),
               const SizedBox(width: 8),
               Text(title, style: CustomTextTheme.theme.bodySmall),
             ],
