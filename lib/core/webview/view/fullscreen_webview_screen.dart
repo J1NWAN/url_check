@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_check/core/theme/custom_text_theme.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class FullscreenWebViewScreen extends StatefulWidget {
@@ -46,7 +47,7 @@ class _FullscreenWebViewScreenState extends State<FullscreenWebViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title, style: CustomTextTheme.theme.bodyLarge),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
