@@ -140,7 +140,7 @@ class MonitoringViewModel extends _$MonitoringViewModel {
   Future<List<Map<String, dynamic>>> fetchMonitoringDetail(String systemNameEn) async {
     final repository = ref.read(monitoringRepositoryProvider);
     final monitoringDetailList = await repository.fetchMonitoringDetail(systemNameEn);
-    print('monitoringDetailList: $monitoringDetailList');
+
     state = state.copyWith(monitoringDetailList: monitoringDetailList);
     return monitoringDetailList;
   }
