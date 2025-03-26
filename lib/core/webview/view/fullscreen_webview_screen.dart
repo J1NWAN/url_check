@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class SystemWebViewWidget extends StatefulWidget {
+class FullscreenWebViewScreen extends StatefulWidget {
   final String url;
   final String title;
 
-  const SystemWebViewWidget({
+  const FullscreenWebViewScreen({
     super.key,
     required this.url,
     required this.title,
   });
 
   @override
-  State<SystemWebViewWidget> createState() => _SystemWebViewWidgetState();
+  State<FullscreenWebViewScreen> createState() => _FullscreenWebViewScreenState();
 }
 
-class _SystemWebViewWidgetState extends State<SystemWebViewWidget> {
+class _FullscreenWebViewScreenState extends State<FullscreenWebViewScreen> {
   late WebViewController controller;
   bool isLoading = true;
 
@@ -24,6 +24,7 @@ class _SystemWebViewWidgetState extends State<SystemWebViewWidget> {
     super.initState();
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..enableZoom(true)
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
@@ -47,7 +48,7 @@ class _SystemWebViewWidgetState extends State<SystemWebViewWidget> {
       appBar: AppBar(
         title: Text(widget.title),
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

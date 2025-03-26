@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_check/core/theme/custom_text_theme.dart';
+import 'package:url_check/core/webview/view/fullscreen_webview_screen.dart';
 import 'package:url_check/features/system/model/system_model.dart';
-import 'package:url_check/features/system/view/widget/webview_widget.dart';
 import 'package:url_check/features/system/viewmodel/monitoring_view_model.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -238,35 +238,12 @@ class _MonitoringTabState extends ConsumerState<MonitoringTab> with AutomaticKee
       return;
     }
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true, // 전체 화면 높이를 사용
-      backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9, // 초기 크기 (화면의 90%)
-        minChildSize: 0.5, // 최소 크기 (화면의 50%)
-        maxChildSize: 0.95, // 최대 크기 (화면의 95%)
-        builder: (context, scrollController) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-            child: ClipRRect(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-              child: SystemWebViewWidget(
-                url: url,
-                title: title,
-              ),
-            ),
-          );
-        },
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => FullscreenWebViewScreen(
+          url: url,
+          title: title,
+        ),
       ),
     );
   }
